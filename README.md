@@ -1,4 +1,4 @@
-StellarCore
+CorridorLens
 The intelligence layer for Stellar anchors.
 
 Read-only anchor, corridor, rate, and reputation visibility for Stellar.
@@ -13,20 +13,20 @@ The Stellar network has dozens of anchors — companies like MoneyGram, Cowrie, 
 - What reviewed rate observations are currently available
 - Whether enough independently verifiable evidence exists to publish a reputation score
 - Which anchors are live, degraded, or down
-Developers and users are left checking anchor websites one at a time. StellarCore provides a reviewed, read-only view of the data it has actually persisted.
-What StellarCore Does
-StellarCore synchronizes a reviewed anchor and corridor registry, discovers anchor metadata through SEP-1, stores reviewed SEP-38 indicative-rate observations, calculates reputation from persisted evidence, and exposes read-only APIs plus a public dashboard.
+Developers and users are left checking anchor websites one at a time. CorridorLens provides a reviewed, read-only view of the data it has actually persisted.
+What CorridorLens Does
+CorridorLens synchronizes a reviewed anchor and corridor registry, discovers anchor metadata through SEP-1, stores reviewed SEP-38 indicative-rate observations, calculates reputation from persisted evidence, and exposes read-only APIs plus a public dashboard.
 
 The implementation separates architectural behavior from current production state:
 - Architectural invariants: rate medians require MIN_FRESH_SOURCES=2; reputation uses the documented fixed weights and requires at least 30 outcomes in 90 days before publishing a score.
 - Current production state: the reviewed USDC → BRL rate source is Zeam only, so it is insufficient for a median. The TransferOutcome model and scoring logic exist, but there is no trusted production outcome-ingestion source; reputation therefore remains sparse with null scores.
-- Planned/Future: outcome ingestion is contingent on a legitimate, authorized source with durable provenance. StellarCore does not execute transfers, use customer authentication contexts, or create firm production quotes.
+- Planned/Future: outcome ingestion is contingent on a legitimate, authorized source with durable provenance. CorridorLens does not execute transfers, use customer authentication contexts, or create firm production quotes.
 Think of it as Google Flights for Stellar anchors — pick a corridor, see every option, trust the data.
 
 Architecture
 ```mermaid
 graph TB
-    subgraph FE["StellarCore Frontend (Next.js)"]
+    subgraph FE["CorridorLens Frontend (Next.js)"]
         UI["Public /dashboard\nAnchors · Corridors · Rates · Reputation"]
     end
 
@@ -79,14 +79,14 @@ graph TB
 ```
 How It Works
 1. Anchor Discovery
-StellarCore reads the Stellar network's TOML files. Every Stellar anchor publishes a stellar.toml file at their home domain that declares what SEPs they support, what assets they handle, and what endpoints they expose.
+CorridorLens reads the Stellar network's TOML files. Every Stellar anchor publishes a stellar.toml file at their home domain that declares what SEPs they support, what assets they handle, and what endpoints they expose.
 GET https://anchor.example.com/.well-known/stellar.toml
 The bootstrap synchronization parses the reviewed registry's TOML files and extracts:
 - Supported SEPs (SEP_6, SEP_24, SEP_31, SEP_38)
 - Supported currencies and asset codes
 - API endpoints for rate quotes
 - Transfer instruction URLs
-isTransferCapable is derived from SEP_6, SEP_24, or SEP_31. It is stored metadata, not proof that StellarCore can execute or observe transfers. The public dashboard shows persisted anchors and reviewed corridor associations; it does not infer new corridors from a TOML file.
+isTransferCapable is derived from SEP_6, SEP_24, or SEP_31. It is stored metadata, not proof that CorridorLens can execute or observe transfers. The public dashboard shows persisted anchors and reviewed corridor associations; it does not infer new corridors from a TOML file.
 // lib/stellar/anchors.ts
 
 const TRANSFER_SEPS = [6, 24, 31]
@@ -99,7 +99,7 @@ The rate engine stores individual observations from explicitly reviewed SEP-38 i
 
 Current production state: the reviewed source list contains one Zeam USDC → BRL candidate. This is an observation about the current reviewed configuration, not a requirement of the architecture.
 
-For each reviewed candidate, StellarCore first validates the pair through the
+For each reviewed candidate, CorridorLens first validates the pair through the
 anchor's SEP-38 /prices endpoint, then reads an indicative price from
 /price. It does not call the firm /quote lifecycle.
 
@@ -117,8 +117,8 @@ Fresh sources:  [1608, 1612, 1615]
 Sorted median:   1612
 MIN_FRESH_SOURCES=2 is an architectural invariant. With fewer than two fresh independent sources, the API returns insufficient_fresh_sources and a null median. The current single reviewed Zeam source therefore remains insufficient even when fresh.
 3. Reputation Scoring
-StellarCore's first reputation engine uses only evidence already persisted by
-StellarCore. It is not an external endorsement or a claim about an anchor's
+CorridorLens's first reputation engine uses only evidence already persisted by
+CorridorLens. It is not an external endorsement or a claim about an anchor's
 legal, custodial, or financial trustworthiness.
 Component	Weight	Definition
 Availability	20%	Last synchronized status: LIVE 100, DEGRADED 50, DOWN/UNKNOWN 0.
@@ -152,11 +152,11 @@ update this single row and do not append historical scores. The engine is run by
 the authenticated scheduled-refresh boundary and remains independent of the
 public, read-only reputation API.
 
-TransferOutcome is implemented data modeling, not a production evidence feed. StellarCore has no trusted production outcome-ingestion source today and does not infer outcomes from Horizon or a successful on-chain payment. SEP-6 and SEP-24 history is customer-scoped where authentication applies; SEP-31 lifecycle access is scoped to authorized participants and partner anchors. Until a legitimate, authorized source with provenance exists, sparse reputation is the intended result and established scores are not supported by sufficient evidence.
+TransferOutcome is implemented data modeling, not a production evidence feed. CorridorLens has no trusted production outcome-ingestion source today and does not infer outcomes from Horizon or a successful on-chain payment. SEP-6 and SEP-24 history is customer-scoped where authentication applies; SEP-31 lifecycle access is scoped to authorized participants and partner anchors. Until a legitimate, authorized source with provenance exists, sparse reputation is the intended result and established scores are not supported by sufficient evidence.
 
 Planned/Future: a transfer-outcome ingestion boundary may be considered only after a trusted source, authorization model, privacy review, and durable provenance design are available. It will not be a promised public write API.
 4. The Public API
-StellarCore exposes persisted anchors, corridors, rates, and reputation through public read-only JSON endpoints. These endpoints do not synchronize anchors, request customer authorization, create transfers, or write outcome evidence.
+CorridorLens exposes persisted anchors, corridors, rates, and reputation through public read-only JSON endpoints. These endpoints do not synchronize anchors, request customer authorization, create transfers, or write outcome evidence.
 5. The Dashboard
 The server-rendered /dashboard consumes the same bounded read models as the public API. It shows persisted observations, freshness, null medians where evidence is insufficient, and null reputation scores where outcome evidence is sparse. Reloading the page requests a fresh read. While the page is visible, the dashboard re-reads the same panels at most once per minute (DASHBOARD_REFRESH_INTERVAL_MS, 60 seconds); a hidden tab cancels the pending refresh and issues no requests, and returning to the tab refreshes immediately when the interval has already elapsed or waits for the remaining time otherwise. The rate panel labels its latest valid persisted observation time separately from the read evaluation time; when no valid observation time exists, it displays Freshness unavailable — no valid observation time. When a transient read failure produces a verified last-known-good response, the panel marks it as stale evidence with the snapshot generation time and age, and a failure without retained evidence shows the error state instead of old data. Anchor and corridor directory data has no evidence timestamp, so those panels do not display a freshness time.
 
@@ -210,11 +210,11 @@ snapshots, transfer-outcome evidence, and one current reputation score per
 anchor. Freshness is calculated at read time; it is not stored on a snapshot.
 
 TransferOutcome supports the scoring model but has no production writer. Its
-presence in the schema must not be read as a claim that StellarCore collects
+presence in the schema must not be read as a claim that CorridorLens collects
 customer transfers, independently verifies off-chain settlement, or has
 established reputation evidence.
 Project Structure
-stellarcore/
+corridorlens/
 ├── app/                    # Landing page, /dashboard, public read APIs, internal cron route
 ├── components/dashboard/   # Dashboard sections and bounded state views
 ├── constants/              # Reviewed anchor, corridor, rate-source, and scoring configuration
@@ -247,7 +247,7 @@ Environment Variables
 
 # Explicit runtime environment identity.
 # One of: production, preview, development, test, ci.
-STELLARCORE_ENVIRONMENT="development"
+CORRIDORLENS_ENVIRONMENT="development"
 
 # Server-only application/runtime PostgreSQL connection for this environment.
 # Required outside tests. Must use postgres:// or postgresql://.
@@ -262,7 +262,7 @@ MIN_FRESH_SOURCES="2"
 
 # Optional writable directory for bounded last-known-good public evidence snapshots.
 STALE_EVIDENCE_DIRECTORY="/path/to/writable/stale-evidence"
-STELLARCORE_ENVIRONMENT declares the runtime identity explicitly. Valid
+CORRIDORLENS_ENVIRONMENT declares the runtime identity explicitly. Valid
 values are production, preview, development, test, and ci.
 When it is absent on Vercel, VERCEL_ENV is used; test runs may fall back to
 NODE_ENV=test. Runtime identity is never inferred from hostnames or database
@@ -281,7 +281,7 @@ optional positive integers with defaults of 120000 and 2 respectively.
 
 STALE_EVIDENCE_DIRECTORY is optional. By default, the Node.js runtime stores
 verified public read snapshots in its temporary directory under
-stellarcore-stale-evidence. On multi-instance or serverless deployments this
+corridorlens-stale-evidence. On multi-instance or serverless deployments this
 store is local to a warm instance; use a writable shared mount if fallback must
 survive instance replacement. If the store is unavailable, corrupt, or older
 than five minutes, the APIs fail closed.
@@ -291,8 +291,8 @@ Prerequisites
 - PostgreSQL accessible through a direct connection URL
 Installation
 # 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/stellarcore.git
-cd stellarcore
+git clone https://github.com/YOUR_USERNAME/corridorlens.git
+cd corridorlens
 
 # 2. Install dependencies
 npm install
@@ -376,7 +376,7 @@ advertisement, quote availability, fresh observations, or transfer support.
 Live discovery, rate-engine validation, and persisted-association checks remain
 independent defense-in-depth boundaries.
 
-audit:compatibility verifies that StellarCore's public API serializers and error
+audit:compatibility verifies that CorridorLens's public API serializers and error
 envelopes conform to versioned compatibility contracts (contracts/api/v1/). It
 detects accidental breaking changes such as field removals, renames, type or
 nullability regressions, status-code changes, and ordering changes. Compatible
@@ -434,7 +434,7 @@ seed, challenge XDR, JWT, or Authorization header. It is not run by npm test,
 the production build, or postinstall.
 
 SEP-10 contract notes: the signer callback must return the challenge it was
-given with signatures added; StellarCore compares the SDK transaction hash of
+given with signatures added; CorridorLens compares the SDK transaction hash of
 the returned body with the original challenge before any token POST. When a
 client domain was requested, the returned token's client_domain claim must be
 present, well formed, and equal to it; otherwise no such claim is required.
@@ -442,7 +442,7 @@ Token claims are decoded, not cryptographically verified: decoding is not JWT
 signature verification, and the SEP-10 signing key is not assumed to be the JWT
 verification key.
 Production deployment
-StellarCore targets Vercel Node.js functions with managed PostgreSQL and Prisma ORM. The full staged deployment procedure is in [DEPLOYMENT.md](docs/DEPLOYMENT.md); it does not provision or deploy infrastructure.
+CorridorLens targets Vercel Node.js functions with managed PostgreSQL and Prisma ORM. The full staged deployment procedure is in [DEPLOYMENT.md](docs/DEPLOYMENT.md); it does not provision or deploy infrastructure.
 - Use Node.js 22.x and npm run build; existing postinstall generates Prisma Client.
 - Set server-only DATABASE_URL and CRON_SECRET; DIRECT_URL is not used.
 - Apply tracked migrations only through the manual Deploy production migrations GitHub Actions workflow (.github/workflows/deploy-production-migrations.yml, workflow_dispatch only), which runs npx prisma migrate deploy — never ordinary Vercel builds or previews. See [DEPLOYMENT.md](docs/DEPLOYMENT.md).
@@ -510,7 +510,7 @@ empty or whitespace-only value is invalid; limit must be an integer from 1 to
 100 and offset a non-negative integer. Invalid values return HTTP 400
 invalid_pagination before a repository read.
 
-Returns the public directory of anchors currently persisted by StellarCore,
+Returns the public directory of anchors currently persisted by CorridorLens,
 ordered by slug ascending. The static anchor registry is synchronization input
 only; a registry entry that has never been synchronized does not appear here.
 {
@@ -532,8 +532,8 @@ it is not a guarantee of current quote health. GET requests do not refresh it.
 seps contains only stored discovered SEP numbers, sorted numerically.
 isTransferCapable is an advertised-interface classification derived from that
 persisted SEP list: it is true only when SEP-6, SEP-24, or SEP-31 appears in
-the list from StellarCore's last successful SEP-1 synchronization. It does not
-verify current operation, authorize StellarCore to use an interface, or provide
+the list from CorridorLens's last successful SEP-1 synchronization. It does not
+verify current operation, authorize CorridorLens to use an interface, or provide
 transfer-outcome evidence. corridorCount counts persisted AnchorCorridor
 associations, not live quotes or fresh rate sources.
 
@@ -697,7 +697,7 @@ a live-health timestamp. Both routes are dynamic, use Cache-Control: no-store,
 and return safe HTTP 500 internal_error responses for repository failures.
 They never expose UUIDs, database enums, raw errors, or environment values.
 GET /api/corridors
-Returns the public directory of corridors currently persisted in StellarCore,
+Returns the public directory of corridors currently persisted in CorridorLens,
 ordered by slug ascending. This is database-backed discovery: the reviewed
 registry supplies synchronization input, while only synchronized Corridor
 rows appear in this response.
@@ -726,7 +726,7 @@ The route is dynamic and sends Cache-Control: no-store, so directory changes
 are visible without relying on accidental Next.js caching.
 GET /api/corridors/[slug]
 Returns one persisted corridor and the anchors linked to it through
-StellarCore's persisted reviewed configuration. The bounded read uses only the
+CorridorLens's persisted reviewed configuration. The bounded read uses only the
 persisted Corridor, AnchorCorridor, and Anchor relationships.
 {
   "corridor": {
@@ -764,7 +764,7 @@ with anchorCount: 0 and anchors: []. The endpoint is GET-only, dynamic,
 uses Cache-Control: no-store, and performs no rate, reputation, transfer,
 authentication, or live Stellar reads.
 Contributing
-StellarCore is community-maintained. Every anchor, corridor, and feature addition is a welcome contribution.
+CorridorLens is community-maintained. Every anchor, corridor, and feature addition is a welcome contribution.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the branch protection and pull request workflow.
 Adding an Anchor
@@ -782,9 +782,9 @@ Code Contributions
 - Ensure npx tsc --noEmit and npm test pass
 - Open a PR with a clear description of the change
 Drips Wave
-StellarCore participates in the Stellar Development Foundation's Drips Wave program. Community contributors can pick up open issues and earn points that convert to USDC rewards.
+CorridorLens participates in the Stellar Development Foundation's Drips Wave program. Community contributors can pick up open issues and earn points that convert to USDC rewards.
 
-Browse open issues at github.com/YOUR_USERNAME/stellarcore/issues and filter by the drips-wave label.
+Browse open issues at github.com/YOUR_USERNAME/corridorlens/issues and filter by the drips-wave label.
 Issue Complexity Levels
 Label	Points	Example Issues
 complexity: trivial	100	Add anchor, add corridor, fix typo, update anchor logo

@@ -66,7 +66,7 @@ jobs:
         env:
           SEED: "0"
           PROPERTY_ITERATIONS: "5000"
-          STELLARCORE_PROPERTY_ROTATING: "1"
+          CORRIDORLENS_PROPERTY_ROTATING: "1"
 
       - name: Run regression corpus with several pinned seeds
         run: |

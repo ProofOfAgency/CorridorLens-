@@ -35,7 +35,7 @@ jobs:
 
       - name: Generate Prisma client
         env:
-          DATABASE_URL: postgresql://stellarcore:stellarcore@localhost:5432/stellarcore
+          DATABASE_URL: postgresql://corridorlens:corridorlens@localhost:5432/corridorlens
         run: npx prisma generate
 
       - name: Audit public API compatibility

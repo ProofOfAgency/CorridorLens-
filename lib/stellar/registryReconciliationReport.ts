@@ -16,7 +16,7 @@ export function formatRegistryReconciliationReport(
   const lines: string[] = [];
   const { result, plan } = report;
 
-  lines.push("StellarCore registry-to-database reconciliation");
+  lines.push("CorridorLens registry-to-database reconciliation");
   lines.push("===============================================");
   lines.push(
     result.drift

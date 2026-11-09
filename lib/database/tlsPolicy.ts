@@ -24,7 +24,7 @@
  * 3. `sslmode=require`/`verify-ca` downgrade certificate verification
  *    when interpreted by the driver on their own.
  *
- * StellarCore therefore parses and classifies the URL itself, strips TLS
+ * CorridorLens therefore parses and classifies the URL itself, strips TLS
  * parameters from the URL handed to the driver, and passes an explicit ssl
  * object with `rejectUnauthorized: true` (and a CA when configured) directly
  * in the Pool config — the last word on transport security. A managed
@@ -50,8 +50,8 @@ export type DatabaseTlsSource =
   | "URL_PARAMETER"
   /** PGSSLMODE / PGSSL* environment variables. */
   | "PG_ENVIRONMENT"
-  /** SSL_MODE_TARGET / SSL_ROOT_CERT env vars (StellarCore-specific CA config). */
-  | "STELLARCORE_ENVIRONMENT";
+  /** SSL_MODE_TARGET / SSL_ROOT_CERT env vars (CorridorLens-specific CA config). */
+  | "CORRIDORLENS_ENVIRONMENT";
 
 export type TlsConfigurationSignal = Readonly<{
   mode: DatabaseTlsMode;
@@ -112,11 +112,11 @@ export type TlsPolicyEnvironmentInput = Readonly<{
    * deployment flag. Local dev/test never resolve as production.
    */
   isProductionLike: boolean;
-  /** The separately gated emergency bypass (STELLARCORE_DB_TLS_EMERGENCY_BYPASS=allow-unverified). */
+  /** The separately gated emergency bypass (CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS=allow-unverified). */
   emergencyBypassRequested: boolean;
-  /** Raw CA certificate value from STELLARCORE_DB_CA (PEM). */
+  /** Raw CA certificate value from CORRIDORLENS_DB_CA (PEM). */
   inlineCa: string | null;
-  /** File path to a CA certificate from STELLARCORE_DB_CA_PATH. */
+  /** File path to a CA certificate from CORRIDORLENS_DB_CA_PATH. */
   caPath: string | null;
   /** Whether a CA file path exists on disk (resolved by the caller). */
   caPathExists: boolean;
@@ -284,7 +284,7 @@ function classifyModeValue(value: string): DatabaseTlsMode {
  *   provider defaults such as sslmode=require can be safely upgraded to
  *   authenticated TLS by the explicit Pool ssl configuration.
  * - A provider CA is optional when the server chains to a public root trusted
- *   by Node; STELLARCORE_DB_CA or STELLARCORE_DB_CA_PATH can provide one.
+ *   by Node; CORRIDORLENS_DB_CA or CORRIDORLENS_DB_CA_PATH can provide one.
  *
  * Non-production runtimes retain permissive local-development behavior.
  */

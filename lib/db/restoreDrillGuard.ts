@@ -384,15 +384,15 @@ export function resolveRestoreDrillTargetFromEnv(
   env: Readonly<Record<string, string | undefined>> = process.env,
 ): RestoreDrillTargetConfig {
   const targetEnvironment =
-    env.STELLARCORE_RESTORE_TARGET_ENVIRONMENT?.trim() ||
+    env.CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT?.trim() ||
     env.RESTORE_TARGET_ENVIRONMENT?.trim() ||
-    (env.NODE_ENV === "test" && !env.STELLARCORE_RESTORE_TARGET_ENVIRONMENT
+    (env.NODE_ENV === "test" && !env.CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT
       ? undefined
       : undefined);
 
   const targetDatabaseUrl =
     env.RESTORE_TARGET_DATABASE_URL?.trim() ||
-    (env.STELLARCORE_RESTORE_TARGET_ENVIRONMENT ? env.DATABASE_URL?.trim() : undefined);
+    (env.CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT ? env.DATABASE_URL?.trim() : undefined);
 
   return {
     targetEnvironment,

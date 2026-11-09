@@ -3,7 +3,7 @@ export type StellarAuthProtocol = "sep10" | "sep45";
 /**
  * A short-lived bearer token owned by the caller that requested it.
  *
- * StellarCore does not persist, cache, refresh, or revoke this value. The
+ * CorridorLens does not persist, cache, refresh, or revoke this value. The
  * caller is responsible for keeping it confidential and discarding it after
  * `expiresAt`.
  */

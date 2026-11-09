@@ -88,7 +88,7 @@ test("workflow validation: production target identity is refused before executio
     {
       env: {
         ...process.env,
-        STELLARCORE_RESTORE_TARGET_ENVIRONMENT: "production",
+        CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT: "production",
       },
       encoding: "utf8",
     },
@@ -112,7 +112,7 @@ test("workflow validation: approved isolated test target is accepted", () => {
       {
         env: {
           ...process.env,
-          STELLARCORE_RESTORE_TARGET_ENVIRONMENT: testTarget,
+          CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT: testTarget,
         },
         encoding: "utf8",
       },
@@ -134,7 +134,7 @@ test("workflow validation: missing target identity is refused (fail-closed)", ()
     {
       env: {
         ...process.env,
-        STELLARCORE_RESTORE_TARGET_ENVIRONMENT: "",
+        CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT: "",
         RESTORE_TARGET_ENVIRONMENT: "",
       },
       encoding: "utf8",
@@ -152,7 +152,7 @@ test("workflow validation: missing target identity is refused (fail-closed)", ()
 
 test("workflow validation: failure output never leaks credentials or connection URLs", () => {
   const secretCred = "secret_db_pass_xyz9876";
-  const rawUrl = `postgresql://operator:${secretCred}@prod.cluster.internal:5432/stellarcore`;
+  const rawUrl = `postgresql://operator:${secretCred}@prod.cluster.internal:5432/corridorlens`;
 
   const result = spawnSync(
     process.execPath,
@@ -160,7 +160,7 @@ test("workflow validation: failure output never leaks credentials or connection 
     {
       env: {
         ...process.env,
-        STELLARCORE_RESTORE_TARGET_ENVIRONMENT: "production",
+        CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT: "production",
         RESTORE_TARGET_DATABASE_URL: rawUrl,
       },
       encoding: "utf8",

@@ -1,6 +1,6 @@
 # Public API Reference
 
-This document describes the **current public HTTP API** of StellarCore as
+This document describes the **current public HTTP API** of CorridorLens as
 implemented under `app/api/`. It was produced by reading the route handlers,
 the API service layer in `lib/api/`, and the serializers' unit tests — **not**
 by copying README examples.
@@ -44,7 +44,7 @@ by copying README examples.
     traversal, too short, too long) are **replaced** with a generated id and
     never echoed back.
   - The same id is written to the single-line structured failure log
-    (`[stellarcore:public-api] {"event":"public_api_error","operation":…,"code":…,"requestId":…}`),
+    (`[corridorlens:public-api] {"event":"public_api_error","operation":…,"code":…,"requestId":…}`),
     which is how an operator turns a user-reported reference into the matching
     server entry.
   - Error bodies still contain only `code`, `message`, and this id: no stack

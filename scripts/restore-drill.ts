@@ -111,7 +111,7 @@ export async function main(): Promise<void> {
 
     if (args.selfTest) {
       temporaryDirectory = await mkdtemp(
-        join(tmpdir(), "stellarcore-restore-drill-"),
+        join(tmpdir(), "corridorlens-restore-drill-"),
       );
       source = await startPostgres();
       await deployMigrations(source.databaseUrl);
@@ -239,7 +239,7 @@ function parseArguments(args: readonly string[]): {
   let rtoSeconds = RTO_SECONDS;
   let rpoSeconds = RPO_SECONDS;
   let targetEnv: string | undefined =
-    process.env.STELLARCORE_RESTORE_TARGET_ENVIRONMENT?.trim() ||
+    process.env.CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT?.trim() ||
     process.env.RESTORE_TARGET_ENVIRONMENT?.trim();
   let targetUrl: string | undefined =
     process.env.RESTORE_TARGET_DATABASE_URL?.trim();
@@ -375,7 +375,7 @@ async function restoreAndVerify(
 
 async function startPostgres(): Promise<Container> {
   const suffix = randomBytes(8).toString("hex");
-  const name = `stellarcore-restore-drill-${suffix}`;
+  const name = `corridorlens-restore-drill-${suffix}`;
   const network = `${name}-net`;
   const password = randomBytes(24).toString("hex");
   let networkCreated = false;

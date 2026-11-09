@@ -1,6 +1,6 @@
 ---
 name: Propose a new corridor
-about: Propose adding a new asset/country pair corridor to the StellarCore registry
+about: Propose adding a new asset/country pair corridor to the CorridorLens registry
 title: "feat(corridor): Propose [source_asset]-[source_country] to [dest_asset]-[dest_country] corridor"
 labels: ["corridor", "registry"]
 assignees: ""
@@ -48,4 +48,4 @@ assignees: ""
 
 ### Maintainer Review Notice
 
-*Note: All proposed corridors are reviewed by the StellarCore maintainer team for correctness, evidence integrity, and anchor verification before inclusion and merge into the registry.*
+*Note: All proposed corridors are reviewed by the CorridorLens maintainer team for correctness, evidence integrity, and anchor verification before inclusion and merge into the registry.*

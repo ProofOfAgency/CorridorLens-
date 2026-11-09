@@ -1,6 +1,6 @@
-# Contributing to StellarCore
+# Contributing to CorridorLens
 
-Thank you for contributing to StellarCore. The project is maintained through
+Thank you for contributing to CorridorLens. The project is maintained through
 reviewed pull requests so that changes remain clear, testable, and supported by
 evidence.
 
@@ -62,6 +62,6 @@ rejected.
 
 ## Evidence Integrity
 
-StellarCore depends on trustworthy, verifiable information. Pull requests that
+CorridorLens depends on trustworthy, verifiable information. Pull requests that
 fabricate data, bypass validation, or present unverified information as fact
 will not be merged, regardless of code quality.

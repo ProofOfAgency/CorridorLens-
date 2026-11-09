@@ -14,34 +14,34 @@ import type { RuntimeConfig } from "@/lib/config/runtimeConfig";
 /**
  * Release manifest CLI (#142).
  *
- * `npm run release:manifest` writes dist-release/stellarcore-sbom.json and
- * dist-release/stellarcore-provenance.json from the current checkout.
+ * `npm run release:manifest` writes dist-release/corridorlens-sbom.json and
+ * dist-release/corridorlens-provenance.json from the current checkout.
  * `npm run verify:release` re-verifies an artifact directory against the
  * current checkout and fails closed on any drift or secret leakage.
  */
 
-const RELEASE_DIR = process.env.STELLARCORE_RELEASE_DIR ?? "dist-release";
-const SBOM_FILE = "stellarcore-sbom.json";
-const PROVENANCE_FILE = "stellarcore-provenance.json";
+const RELEASE_DIR = process.env.CORRIDORLENS_RELEASE_DIR ?? "dist-release";
+const SBOM_FILE = "corridorlens-sbom.json";
+const PROVENANCE_FILE = "corridorlens-provenance.json";
 
 function commitSha(): string {
-  if (process.env.STELLARCORE_COMMIT_SHA) return process.env.STELLARCORE_COMMIT_SHA;
+  if (process.env.CORRIDORLENS_COMMIT_SHA) return process.env.CORRIDORLENS_COMMIT_SHA;
   return runGit(["rev-parse", "HEAD"]) || "local-uncommitted";
 }
 
 function workflowRef(): string {
   return (
-    process.env.STELLARCORE_WORKFLOW_REF ??
+    process.env.CORRIDORLENS_WORKFLOW_REF ??
     "refs/heads/local-manual-run"
   );
 }
 
 function invocationId(): string {
-  return process.env.STELLARCORE_INVOCATION_ID ?? "local";
+  return process.env.CORRIDORLENS_INVOCATION_ID ?? "local";
 }
 
 function environmentId(): string {
-  return process.env.STELLARCORE_ENVIRONMENT_ID ?? "local";
+  return process.env.CORRIDORLENS_ENVIRONMENT_ID ?? "local";
 }
 
 function runGit(args: string[]): string {
@@ -140,8 +140,8 @@ async function verify(): Promise<void> {
   }
 
   // 2. Provenance structure and required identity fields.
-  if (provenance.stellarcoreProvenanceVersion !== "v1") {
-    failures.push("provenance.stellarcoreProvenanceVersion must be v1");
+  if (provenance.corridorlensProvenanceVersion !== "v1") {
+    failures.push("provenance.corridorlensProvenanceVersion must be v1");
   }
   if (!/^[0-9a-f]{40}$/.test(provenance.source?.commitSha ?? "")) {
     failures.push("provenance.source.commitSha must be a full git SHA");
@@ -153,10 +153,10 @@ async function verify(): Promise<void> {
   }
   if (
     provenance.runtimeConfiguration?.fingerprintVersion !==
-    "stellarcore-runtime-config-v1"
+    "corridorlens-runtime-config-v1"
   ) {
     failures.push(
-      "provenance.runtimeConfiguration.fingerprintVersion must be stellarcore-runtime-config-v1",
+      "provenance.runtimeConfiguration.fingerprintVersion must be corridorlens-runtime-config-v1",
     );
   }
 

@@ -1,6 +1,6 @@
 # Browser security headers and CSP
 
-StellarCore applies a request-scoped Content Security Policy to browser-rendered
+CorridorLens applies a request-scoped Content Security Policy to browser-rendered
 App Router pages.
 
 ## Production policy
@@ -44,7 +44,7 @@ therefore do not receive the page-oriented CSP or cross-origin browser policy.
 ## Runtime and rendering requirement
 
 The middleware explicitly uses the Node.js runtime supported by Next.js 15.5 so
-it remains compatible with StellarCore's existing Node-only instrumentation and
+it remains compatible with CorridorLens's existing Node-only instrumentation and
 configuration-fingerprint dependency graph.
 
 Nonce-based CSP requires dynamic request-time rendering. The root App Router

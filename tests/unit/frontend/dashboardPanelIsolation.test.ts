@@ -16,7 +16,7 @@ globalScope.React = React;
 
 // Isolate stale evidence store before importing any API route or component dependencies
 process.env.STALE_EVIDENCE_DIRECTORY = mkdtempSync(
-  join(tmpdir(), "stellarcore-dashboard-isolation-test-"),
+  join(tmpdir(), "corridorlens-dashboard-isolation-test-"),
 );
 
 import { AnchorsSection } from "@/components/dashboard/AnchorsSection";

@@ -16,7 +16,7 @@ import {
 const baseEnv: Record<string, string | undefined> = {
   DATABASE_URL: "postgresql://user:pass@localhost:5432/db",
   CRON_SECRET: "test-secret",
-  STELLARCORE_ENVIRONMENT: "development",
+  CORRIDORLENS_ENVIRONMENT: "development",
   NODE_ENV: "development",
   VERCEL_ENV: undefined,
   RATE_FRESHNESS_THRESHOLD_MS: undefined,
@@ -46,7 +46,7 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
   });
 
   await test("accepts valid production config with CRON_SECRET", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production" };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production" };
     const result = validateRuntimeConfig(env);
     okResult(result);
     assert.equal(result.config.environment, "production");
@@ -54,7 +54,7 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
   });
 
   await test("accepts valid preview config without CRON_SECRET", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "preview", CRON_SECRET: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "preview", CRON_SECRET: undefined };
     const result = validateRuntimeConfig(env);
     okResult(result);
     assert.equal(result.config.environment, "preview");
@@ -62,20 +62,20 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
   });
 
   await test("accepts valid ci config with DATABASE_URL but no CRON_SECRET", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "ci", CRON_SECRET: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "ci", CRON_SECRET: undefined };
     const result = validateRuntimeConfig(env);
     okResult(result);
     assert.equal(result.config.environment, "ci");
   });
 
-  await test("rejects missing STELLARCORE_ENVIRONMENT when not on Vercel or test", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: undefined, VERCEL_ENV: undefined, NODE_ENV: undefined };
+  await test("rejects missing CORRIDORLENS_ENVIRONMENT when not on Vercel or test", () => {
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: undefined, VERCEL_ENV: undefined, NODE_ENV: undefined };
     const result = validateRuntimeConfig(env);
     errorResult(result, "MISSING_RUNTIME_ENVIRONMENT");
   });
 
   await test("accepts test environment from NODE_ENV=test", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: undefined, VERCEL_ENV: undefined, NODE_ENV: "test" };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: undefined, VERCEL_ENV: undefined, NODE_ENV: "test" };
     const result = validateRuntimeConfig(env);
     okResult(result);
     assert.equal(result.config.environment, "test");
@@ -85,7 +85,7 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
   await test("allows test config without DATABASE_URL until database functionality is used", () => {
     const env = {
       ...baseEnv,
-      STELLARCORE_ENVIRONMENT: undefined,
+      CORRIDORLENS_ENVIRONMENT: undefined,
       VERCEL_ENV: undefined,
       NODE_ENV: "test",
       DATABASE_URL: undefined,
@@ -95,8 +95,8 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
     assert.equal(result.config.databaseUrl, undefined);
   });
 
-  await test("rejects invalid STELLARCORE_ENVIRONMENT value", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "invalid" };
+  await test("rejects invalid CORRIDORLENS_ENVIRONMENT value", () => {
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "invalid" };
     const result = validateRuntimeConfig(env);
     errorResult(result, "RUNTIME_ENVIRONMENT_INVALID");
     if (result.code === "RUNTIME_ENVIRONMENT_INVALID") {
@@ -105,7 +105,7 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
   });
 
   await test("rejects missing DATABASE_URL in production", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", DATABASE_URL: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", DATABASE_URL: undefined };
     const result = validateRuntimeConfig(env);
     errorResult(result, "MISSING_REQUIRED");
     if (result.code === "MISSING_REQUIRED") {
@@ -115,7 +115,7 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
   });
 
   await test("rejects missing DATABASE_URL in preview", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "preview", DATABASE_URL: undefined, CRON_SECRET: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "preview", DATABASE_URL: undefined, CRON_SECRET: undefined };
     const result = validateRuntimeConfig(env);
     errorResult(result, "MISSING_REQUIRED");
     if (result.code === "MISSING_REQUIRED") {
@@ -125,7 +125,7 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
   });
 
   await test("rejects missing CRON_SECRET in production", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", CRON_SECRET: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", CRON_SECRET: undefined };
     const result = validateRuntimeConfig(env);
     errorResult(result, "MISSING_REQUIRED");
     if (result.code === "MISSING_REQUIRED") {
@@ -229,8 +229,8 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
     assert.equal(result.config.minFreshSources, 2);
   });
 
-  await test("uses VERCEL_ENV when STELLARCORE_ENVIRONMENT not set", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: undefined, VERCEL_ENV: "preview" };
+  await test("uses VERCEL_ENV when CORRIDORLENS_ENVIRONMENT not set", () => {
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: undefined, VERCEL_ENV: "preview" };
     const result = validateRuntimeConfig(env);
     okResult(result);
     assert.equal(result.config.environment, "preview");
@@ -238,7 +238,7 @@ test("lib/config/runtimeConfig - validateRuntimeConfig", async () => {
   });
 
   await test("rejects empty CRON_SECRET in production", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", CRON_SECRET: "   " };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", CRON_SECRET: "   " };
     const result = validateRuntimeConfig(env);
     errorResult(result, "MISSING_REQUIRED");
     if (result.code === "MISSING_REQUIRED") {
@@ -263,7 +263,7 @@ test("lib/config/runtimeConfig - assertRuntimeConfig", async () => {
   });
 
   await test("throws error with bounded message (no secrets)", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", CRON_SECRET: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", CRON_SECRET: undefined };
     assert.throws(
       () => assertRuntimeConfig(env),
       (error: Error) => {
@@ -277,7 +277,7 @@ test("lib/config/runtimeConfig - assertRuntimeConfig", async () => {
   });
 
   await test("throws error with variable name for missing required", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", DATABASE_URL: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", DATABASE_URL: undefined };
     assert.throws(
       () => assertRuntimeConfig(env),
       (error: Error) => {
@@ -290,7 +290,7 @@ test("lib/config/runtimeConfig - assertRuntimeConfig", async () => {
   });
 
   await test("throws error with reason for invalid DATABASE_URL", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", DATABASE_URL: "mysql://x" };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", DATABASE_URL: "mysql://x" };
     assert.throws(
       () => assertRuntimeConfig(env),
       (error: Error) => {
@@ -374,7 +374,7 @@ test("lib/config/runtimeConfig - RuntimeConfigValidationError", async () => {
   });
 
   await test("exposes error code", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", CRON_SECRET: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", CRON_SECRET: undefined };
     assert.throws(
       () => assertRuntimeConfig(env),
       (error: Error) => {
@@ -386,7 +386,7 @@ test("lib/config/runtimeConfig - RuntimeConfigValidationError", async () => {
   });
 
   await test("exposes variable for relevant errors", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", CRON_SECRET: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", CRON_SECRET: undefined };
     assert.throws(
       () => assertRuntimeConfig(env),
       (error: Error) => {
@@ -398,7 +398,7 @@ test("lib/config/runtimeConfig - RuntimeConfigValidationError", async () => {
   });
 
   await test("exposes environment for relevant errors", () => {
-    const env = { ...baseEnv, STELLARCORE_ENVIRONMENT: "production", CRON_SECRET: undefined };
+    const env = { ...baseEnv, CORRIDORLENS_ENVIRONMENT: "production", CRON_SECRET: undefined };
     assert.throws(
       () => assertRuntimeConfig(env),
       (error: Error) => {

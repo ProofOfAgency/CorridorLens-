@@ -1,4 +1,4 @@
-# StellarCore threat model
+# CorridorLens threat model
 
 STRIDE-organized threat model of the deployed system, per #61. Document only:
 no finding is fixed here — each carries severity, likelihood and a concrete
@@ -41,7 +41,7 @@ PR review plus the manual `bootstrap-production-registry.yml` workflow.
 **Threat (Tampering/Elevation):** the validation checks *shape*, not
 *ownership or legitimacy*. A registry PR adding a plausible-looking anchor —
 or editing an existing entry's `home_domain` to an attacker's domain — turns
-the platform into a reputation launderer: StellarCore would probe, score and
+the platform into a reputation launderer: CorridorLens would probe, score and
 publicly present the attacker's endpoint as a tracked anchor, and all
 outbound SEP traffic for that anchor goes to attacker infrastructure (see §2).
 The attack is social (getting the PR merged), not technical.

@@ -2,13 +2,13 @@
 
 ## Overview
 
-StellarCore provides public APIs for anchor discovery, corridor mappings, live exchange rates, and reputation scoring. External applications, wallet clients, and automated integrations rely on consistent response shapes, status codes, and error envelopes.
+CorridorLens provides public APIs for anchor discovery, corridor mappings, live exchange rates, and reputation scoring. External applications, wallet clients, and automated integrations rely on consistent response shapes, status codes, and error envelopes.
 
-To guarantee that accidental regressions are detected before code is merged or deployed, StellarCore enforces **executable compatibility contracts** versioned under `contracts/api/v1/`.
+To guarantee that accidental regressions are detected before code is merged or deployed, CorridorLens enforces **executable compatibility contracts** versioned under `contracts/api/v1/`.
 
 ## Compatibility Rules
 
-StellarCore classifies API modifications into **breaking changes** and **compatible additive changes**.
+CorridorLens classifies API modifications into **breaking changes** and **compatible additive changes**.
 
 ### Breaking Changes (Gate FAILS)
 
@@ -27,7 +27,7 @@ The compatibility gate immediately fails if any of the following are detected wi
 
 ### Compatible Additive Changes (Gate PASSES)
 
-Additive changes are permitted under StellarCore's documented additive policy:
+Additive changes are permitted under CorridorLens's documented additive policy:
 
 1. **New Optional Fields**: Adding new optional or nullable properties to existing objects is backward-compatible. API consumers are expected to ignore unrecognized properties.
 2. **New Endpoints**: Introducing new routes or HTTP methods.

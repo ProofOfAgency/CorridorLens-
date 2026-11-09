@@ -26,10 +26,10 @@ export function resolveDatabaseTlsPolicyForEnvironment(
   const environment = input.environment;
   const emergencyBypassActive =
     input.environmentId === "production" &&
-    environment.STELLARCORE_DB_TLS_EMERGENCY_BYPASS === TLS_EMERGENCY_BYPASS_VALUE;
+    environment.CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS === TLS_EMERGENCY_BYPASS_VALUE;
 
-  const inlineCa = environment.STELLARCORE_DB_CA?.trim() || null;
-  const caPath = environment.STELLARCORE_DB_CA_PATH?.trim() || null;
+  const inlineCa = environment.CORRIDORLENS_DB_CA?.trim() || null;
+  const caPath = environment.CORRIDORLENS_DB_CA_PATH?.trim() || null;
   const readFile = input.readFile ?? true;
   const caPathExists = Boolean(caPath && readFile && existsSync(caPath));
 
@@ -40,7 +40,7 @@ export function resolveDatabaseTlsPolicyForEnvironment(
         rejection: Object.freeze({
           code: "PRODUCTION_TLS_CA_MISSING",
           message:
-            "Configured PostgreSQL CA file is unavailable. Provide a readable STELLARCORE_DB_CA_PATH or remove it to use the platform trust store.",
+            "Configured PostgreSQL CA file is unavailable. Provide a readable CORRIDORLENS_DB_CA_PATH or remove it to use the platform trust store.",
           signal: null,
         }),
       }),

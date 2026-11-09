@@ -10,7 +10,7 @@ import type {
 } from "@/types/corridor";
 import type { ReviewedLiveRateSource } from "@/types/liveRateSource";
 
-export type StellarCoreConfigurationInput = Readonly<{
+export type CorridorLensConfigurationInput = Readonly<{
   anchors: readonly AnchorRegistryEntry[];
   corridors: readonly CorridorRegistryEntry[];
   anchorCorridorMappings: readonly AnchorCorridorRegistryEntry[];
@@ -57,19 +57,19 @@ export type ConfigurationAuditResult = Readonly<{
   issues: readonly ConfigurationAuditIssue[];
 }>;
 
-export class StellarCoreConfigurationAuditError extends Error {
-  readonly code = "INVALID_STELLARCORE_CONFIGURATION";
+export class CorridorLensConfigurationAuditError extends Error {
+  readonly code = "INVALID_CORRIDORLENS_CONFIGURATION";
   readonly issues: readonly ConfigurationAuditIssue[];
 
   constructor(result: ConfigurationAuditResult) {
-    super("StellarCore configuration audit failed");
-    this.name = "StellarCoreConfigurationAuditError";
+    super("CorridorLens configuration audit failed");
+    this.name = "CorridorLensConfigurationAuditError";
     this.issues = result.issues;
   }
 }
 
-export function auditStellarCoreConfiguration(
-  input: StellarCoreConfigurationInput,
+export function auditCorridorLensConfiguration(
+  input: CorridorLensConfigurationInput,
 ): ConfigurationAuditResult {
   const issues: ConfigurationAuditIssue[] = [];
   const anchors = new Set(input.anchors.map(({ slug }) => slug));
@@ -93,11 +93,11 @@ export function auditStellarCoreConfiguration(
   return Object.freeze({ ok: frozenIssues.length === 0, issues: frozenIssues });
 }
 
-export function assertStellarCoreConfiguration(
-  input: StellarCoreConfigurationInput,
+export function assertCorridorLensConfiguration(
+  input: CorridorLensConfigurationInput,
 ): ConfigurationAuditResult {
-  const result = auditStellarCoreConfiguration(input);
-  if (!result.ok) throw new StellarCoreConfigurationAuditError(result);
+  const result = auditCorridorLensConfiguration(input);
+  if (!result.ok) throw new CorridorLensConfigurationAuditError(result);
   return result;
 }
 

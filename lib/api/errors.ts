@@ -61,7 +61,7 @@ export const consolePublicApiErrorReporter: PublicApiErrorReporter = (error, con
   const code = (context && typeof context.code === "string" && context.code) || "internal_error";
   const requestId = context?.requestId;
   console.error(
-    `[stellarcore:public-api] ${JSON.stringify({
+    `[corridorlens:public-api] ${JSON.stringify({
       event: "public_api_error",
       operation,
       code,

@@ -400,7 +400,7 @@ export async function updateAllContracts(
 
 async function runUpdateCli(): Promise<void> {
   const args = process.argv.slice(2);
-  let reviewedBy = "StellarCore Core Team";
+  let reviewedBy = "CorridorLens Core Team";
   let reviewReason = "Public API compatibility contract baseline";
   let breakingChangesApproved = false;
 

@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
         env:
-          DATABASE_URL: postgresql://stellarcore:stellarcore@localhost:5432/stellarcore
+          DATABASE_URL: postgresql://corridorlens:corridorlens@localhost:5432/corridorlens
           PRISMA_GENERATE_DATAPROXY: true
 
       - name: Run linter
@@ -37,5 +37,5 @@ jobs:
 
       - name: Run test suite
         env:
-          DATABASE_URL: postgresql://stellarcore:stellarcore@localhost:5432/stellarcore
+          DATABASE_URL: postgresql://corridorlens:corridorlens@localhost:5432/corridorlens
         run: npm test

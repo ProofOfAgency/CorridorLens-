@@ -1,6 +1,6 @@
 # Testing guide
 
-StellarCore uses Node's built-in test runner through `tsx`. Use Node.js 22.x,
+CorridorLens uses Node's built-in test runner through `tsx`. Use Node.js 22.x,
 install dependencies with `npm ci`, and run the full suite with:
 
 ```bash

@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "contractVersion": "v1",
   "updatedAt": "2026-09-30T14:16:42.032Z",
-  "reviewedBy": "StellarCore Core Team",
+  "reviewedBy": "CorridorLens Core Team",
   "reviewReason": "Public API compatibility contract baseline",
   "breakingChangesApproved": false,
   "totalFixtures": 31,

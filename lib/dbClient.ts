@@ -63,7 +63,7 @@ function initializeDatabaseInstance(): {
   }
 
   if (tls.emergencyBypassActive) {
-    console.warn("[stellarcore:database] emergency TLS verification bypass active");
+    console.warn("[corridorlens:database] emergency TLS verification bypass active");
   }
 
   const pool = createHardenedPool(

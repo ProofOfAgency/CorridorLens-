@@ -165,7 +165,7 @@ test("URL parameters take precedence over PGSSLMODE when both are present", () =
 
 test("TLS parameters are stripped from the URL while non-TLS parameters survive", () => {
   const stripped = stripTlsParameters(
-    "postgres://user:secret@db.example.com:5432/stellar?sslmode=require&connection_limit=5&ssl=no-verify&sslrootcert=%2Fetc%2Fca.pem&application_name=stellarcore",
+    "postgres://user:secret@db.example.com:5432/stellar?sslmode=require&connection_limit=5&ssl=no-verify&sslrootcert=%2Fetc%2Fca.pem&application_name=corridorlens",
   );
 
   const url = new URL(stripped);
@@ -173,7 +173,7 @@ test("TLS parameters are stripped from the URL while non-TLS parameters survive"
     assert.equal(url.searchParams.has(parameter), false, parameter);
   }
   assert.equal(url.searchParams.get("connection_limit"), "5");
-  assert.equal(url.searchParams.get("application_name"), "stellarcore");
+  assert.equal(url.searchParams.get("application_name"), "corridorlens");
   assert.equal(url.username, "user");
   assert.equal(url.hostname, "db.example.com");
 });

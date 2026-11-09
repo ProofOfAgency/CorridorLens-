@@ -57,7 +57,7 @@ test("[O1] rate failure still evaluates reputation and reports ok=false with bot
 // safe 500; the rate work that did complete remains committed and is not
 // misrepresented as a failed cycle.
 test("[O2] fatal reputation failure reaches the HTTP boundary as a safe 500", async () => {
-  const request = new Request("https://stellarcore.test/api/internal/cron/refresh", {
+  const request = new Request("https://corridorlens.test/api/internal/cron/refresh", {
     headers: { authorization: "Bearer secret" },
   });
   const response = await getScheduledRefreshResponse(request, {
@@ -101,7 +101,7 @@ test("[O3] deadline-exceeded during rate ingestion produces a partial cycle, not
 // boundary lets it propagate to the HTTP layer, which maps it to a safe 500 —
 // a cancelled cycle must never return a 200 success summary.
 test("[O4] a cancelled cycle never returns a success summary", async () => {
-  const request = new Request("https://stellarcore.test/api/internal/cron/refresh", {
+  const request = new Request("https://corridorlens.test/api/internal/cron/refresh", {
     headers: { authorization: "Bearer secret" },
   });
 
@@ -119,7 +119,7 @@ test("[O4] a cancelled cycle never returns a success summary", async () => {
 
 // [O4b] A deadline-exceeded run behaves the same way: no fabricated 200.
 test("[O4b] a deadline-exceeded cycle never returns a success summary", async () => {
-  const request = new Request("https://stellarcore.test/api/internal/cron/refresh", {
+  const request = new Request("https://corridorlens.test/api/internal/cron/refresh", {
     headers: { authorization: "Bearer secret" },
   });
 
@@ -219,7 +219,7 @@ test("[O6] concurrent cycles report only their own work without fabricating succ
 });
 
 test("[O7] the HTTP boundary keeps no-store semantics under fault responses", async () => {
-  const request = new Request("https://stellarcore.test/api/internal/cron/refresh", {
+  const request = new Request("https://corridorlens.test/api/internal/cron/refresh", {
     headers: { authorization: "Bearer secret" },
   });
   const response = await getScheduledRefreshResponse(request, {

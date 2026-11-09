@@ -7,7 +7,7 @@ import { middleware } from "@/middleware";
 
 test("middleware emits a nonce-bound CSP and hardened page headers", () => {
   const response = middleware(
-    new NextRequest("https://stellarcore.example/dashboard"),
+    new NextRequest("https://corridorlens.example/dashboard"),
   );
 
   const csp = response.headers.get("content-security-policy");
@@ -38,9 +38,9 @@ test("middleware emits a nonce-bound CSP and hardened page headers", () => {
 });
 
 test("middleware creates a different nonce for separate page requests", () => {
-  const first = middleware(new NextRequest("https://stellarcore.example/"));
+  const first = middleware(new NextRequest("https://corridorlens.example/"));
   const second = middleware(
-    new NextRequest("https://stellarcore.example/dashboard"),
+    new NextRequest("https://corridorlens.example/dashboard"),
   );
 
   const firstNonce = first.headers

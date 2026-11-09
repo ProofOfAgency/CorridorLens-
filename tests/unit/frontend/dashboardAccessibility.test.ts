@@ -39,7 +39,7 @@ for (const key of globals) {
 }
 
 Object.defineProperty(globalThis, "navigator", {
-  value: { userAgent: "stellarcore-test/1.0" },
+  value: { userAgent: "corridorlens-test/1.0" },
   configurable: true,
 });
 

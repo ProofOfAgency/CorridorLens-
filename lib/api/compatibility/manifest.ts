@@ -94,7 +94,7 @@ export function verifyManifestIntegrity(
       const files = readdirSync(domainPath, { withFileTypes: true });
       for (const file of files) {
         if (file.isFile() && file.name.endsWith(".json")) {
-          const relativePath = relative(root, join(domainPath, file.name));
+          const relativePath = relative(root, join(domainPath, file.name)).replace(/\\/g, "/");
           fixtureFilesOnDisk.push(relativePath);
         }
       }
@@ -145,7 +145,7 @@ export function writeFixtureFile(
   const formatted = `${JSON.stringify(fixture, null, 2)}\n`;
   writeFileSync(targetPath, formatted, "utf8");
 
-  return relative(root, targetPath);
+  return relative(root, targetPath).replace(/\\/g, "/");
 }
 
 export function buildAndSaveManifest(
@@ -189,7 +189,7 @@ export function buildAndSaveManifest(
     version: options.version ?? "1.0.0",
     contractVersion,
     updatedAt: new Date().toISOString(),
-    reviewedBy: options.reviewedBy ?? "StellarCore Core Team",
+    reviewedBy: options.reviewedBy ?? "CorridorLens Core Team",
     reviewReason: options.reviewReason ?? "Routine compatibility baseline",
     breakingChangesApproved: options.breakingChangesApproved ?? false,
     totalFixtures: manifestEntries.length,

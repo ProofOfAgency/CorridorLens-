@@ -286,7 +286,7 @@ test("the structured failure log contains the published id, operation, and code"
 
   assert.equal(calls.length, 3);
 
-  const prefix = "[stellarcore:public-api] ";
+  const prefix = "[corridorlens:public-api] ";
   const first = String(calls[0]?.[0]);
   assert.equal(first.startsWith(prefix), true);
   assert.deepEqual(JSON.parse(first.slice(prefix.length)), {

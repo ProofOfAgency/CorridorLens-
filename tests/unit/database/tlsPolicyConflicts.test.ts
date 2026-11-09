@@ -20,7 +20,7 @@ import { resolveDatabaseTlsPolicyForEnvironment } from "@/lib/database/tlsPolicy
  * 1. Within the URL, conflicting declarations (`sslmode` vs `ssl`, repeated
  *    `sslmode`) resolve to the weakest declared posture, independent of order.
  * 2. Any URL TLS declaration takes precedence over PGSSLMODE / PGSSL*.
- * 3. STELLARCORE_DB_CA wins over STELLARCORE_DB_CA_PATH, but a configured,
+ * 3. CORRIDORLENS_DB_CA wins over CORRIDORLENS_DB_CA_PATH, but a configured,
  *    unreadable CA path still fails production startup.
  * 4. The emergency gate only ever relaxes a URL that itself asks for a
  *    verification bypass; it never weakens a verified URL and never permits
@@ -226,7 +226,7 @@ test("development resolves conflicting declarations to the weakest posture too",
 });
 
 test("an inline CA takes precedence over a readable CA path", () => {
-  const caDir = mkdtempSync(join(tmpdir(), "stellarcore-ca-conflict-"));
+  const caDir = mkdtempSync(join(tmpdir(), "corridorlens-ca-conflict-"));
   const caPath = join(caDir, "provider-ca.pem");
   writeFileSync(caPath, "-----BEGIN CERTIFICATE-----\nSYNTHETIC-FILE-CA-452\n-----END CERTIFICATE-----\n");
 
@@ -234,7 +234,7 @@ test("an inline CA takes precedence over a readable CA path", () => {
     const result = resolveDatabaseTlsPolicyForEnvironment({
       databaseUrl: withQuery("sslmode=require"),
       environmentId: "production",
-      environment: { STELLARCORE_DB_CA: FAKE_CA, STELLARCORE_DB_CA_PATH: caPath },
+      environment: { CORRIDORLENS_DB_CA: FAKE_CA, CORRIDORLENS_DB_CA_PATH: caPath },
     });
 
     assertVerified(result.resolution);
@@ -250,8 +250,8 @@ test("an unreadable CA path fails production startup even when an inline CA is s
     databaseUrl: BASE_URL,
     environmentId: "production",
     environment: {
-      STELLARCORE_DB_CA: FAKE_CA,
-      STELLARCORE_DB_CA_PATH: "/synthetic/missing/provider-ca.pem",
+      CORRIDORLENS_DB_CA: FAKE_CA,
+      CORRIDORLENS_DB_CA_PATH: "/synthetic/missing/provider-ca.pem",
     },
   });
 
@@ -261,7 +261,7 @@ test("an unreadable CA path fails production startup even when an inline CA is s
 });
 
 test("a whitespace-only inline CA does not displace a readable CA path", () => {
-  const caDir = mkdtempSync(join(tmpdir(), "stellarcore-ca-conflict-"));
+  const caDir = mkdtempSync(join(tmpdir(), "corridorlens-ca-conflict-"));
   const caPath = join(caDir, "provider-ca.pem");
   writeFileSync(caPath, "-----BEGIN CERTIFICATE-----\nSYNTHETIC-FILE-CA-452\n-----END CERTIFICATE-----\n");
 
@@ -269,7 +269,7 @@ test("a whitespace-only inline CA does not displace a readable CA path", () => {
     const result = resolveDatabaseTlsPolicyForEnvironment({
       databaseUrl: BASE_URL,
       environmentId: "production",
-      environment: { STELLARCORE_DB_CA: "   ", STELLARCORE_DB_CA_PATH: caPath },
+      environment: { CORRIDORLENS_DB_CA: "   ", CORRIDORLENS_DB_CA_PATH: caPath },
     });
 
     assertVerified(result.resolution);
@@ -285,7 +285,7 @@ test("the emergency gate is inert outside production", () => {
     const result = resolveDatabaseTlsPolicyForEnvironment({
       databaseUrl: withQuery("ssl=no-verify"),
       environmentId,
-      environment: { STELLARCORE_DB_TLS_EMERGENCY_BYPASS: "allow-unverified" },
+      environment: { CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS: "allow-unverified" },
     });
 
     assert.equal(result.emergencyBypassActive, false, environmentId);
@@ -296,7 +296,7 @@ test("an armed emergency gate with a verified URL keeps verification on in the r
   const result = resolveDatabaseTlsPolicyForEnvironment({
     databaseUrl: withQuery("sslmode=verify-full"),
     environmentId: "production",
-    environment: { STELLARCORE_DB_TLS_EMERGENCY_BYPASS: "allow-unverified" },
+    environment: { CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS: "allow-unverified" },
   });
 
   assertVerified(result.resolution);
@@ -315,7 +315,7 @@ test("conflict diagnostics never expose credentials, hosts, or certificate mater
     const result = resolveDatabaseTlsPolicyForEnvironment({
       databaseUrl: withQuery(query),
       environmentId: "production",
-      environment: { STELLARCORE_DB_CA: FAKE_CA, PGSSLMODE: "verify-full" },
+      environment: { CORRIDORLENS_DB_CA: FAKE_CA, PGSSLMODE: "verify-full" },
     });
 
     assert.equal(result.resolution.accepted, false, query);

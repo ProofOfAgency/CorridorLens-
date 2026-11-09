@@ -42,10 +42,10 @@ function pkg(name: string, version: string, extra: Partial<InstalledPackageRecor
 
 const fixtureLockfile = {
   lockfileVersion: 3,
-  name: "stellarcore",
+  name: "corridorlens",
   packages: {
     "": {
-      name: "stellarcore",
+      name: "corridorlens",
       version: "0.1.0",
       dependencies: { pkg: "^1.0.0" },
     },
@@ -64,7 +64,7 @@ const fixtureLockfile = {
 test("normalizeLockfileGraph keeps graph-relevant fields and drops the rest", () => {
   const normalized = normalizeLockfileGraph(fixtureLockfile);
   assert.equal(normalized.lockfileVersion, 3);
-  assert.equal(normalized.root?.name, "stellarcore");
+  assert.equal(normalized.root?.name, "corridorlens");
   const pkgEntry = normalized.packages["node_modules/pkg"];
   assert.equal(pkgEntry.version, "1.2.3");
   assert.equal(pkgEntry.integrity, "sha512-xyz");

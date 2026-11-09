@@ -1,11 +1,11 @@
 
 # PostgreSQL Failover and Reconnection Behavior
 
-This document defines how StellarCore handles transient PostgreSQL primary outages, provider-managed failovers, and connection endpoint rotations.
+This document defines how CorridorLens handles transient PostgreSQL primary outages, provider-managed failovers, and connection endpoint rotations.
 
 ## Overview
 
-StellarCore connects to PostgreSQL using `@prisma/adapter-pg` backed by a hardened `pg.Pool`. During a primary failover or endpoint rotation (e.g. AWS Aurora failover, Supabase maintenance, or HA proxy cutover), the application prioritizes safety, data integrity, and fast recovery over indefinite retries.
+CorridorLens connects to PostgreSQL using `@prisma/adapter-pg` backed by a hardened `pg.Pool`. During a primary failover or endpoint rotation (e.g. AWS Aurora failover, Supabase maintenance, or HA proxy cutover), the application prioritizes safety, data integrity, and fast recovery over indefinite retries.
 
 ## Key Invariants
 
@@ -30,7 +30,7 @@ StellarCore connects to PostgreSQL using `@prisma/adapter-pg` backed by a harden
 
 ## Error Classification Matrix
 
-StellarCore strictly distinguishes connection/failover failures from normal query errors.
+CorridorLens strictly distinguishes connection/failover failures from normal query errors.
 
 ### Failover & Connection Errors (Trigger Pool Eviction)
 

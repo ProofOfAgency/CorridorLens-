@@ -12,12 +12,12 @@ import { DATABASE_ENVIRONMENT_IDS } from "@/lib/config/environmentGuard";
  * idempotent for the same identity and refuses to rewrite an existing stamp,
  * so a compromised runtime can never re-label a production database.
  *
- * Usage: STELLARCORE_STAMP_ENVIRONMENT=production npm run stamp:environment
+ * Usage: CORRIDORLENS_STAMP_ENVIRONMENT=production npm run stamp:environment
  * (DATABASE_URL must point at the database being stamped; the URL is never
  * printed.)
  */
 async function main(): Promise<void> {
-  const requested = process.env.STELLARCORE_STAMP_ENVIRONMENT?.trim().toLowerCase();
+  const requested = process.env.CORRIDORLENS_STAMP_ENVIRONMENT?.trim().toLowerCase();
   if (!requested) {
     console.error(JSON.stringify({
       ok: false,

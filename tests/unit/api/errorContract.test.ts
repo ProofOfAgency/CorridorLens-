@@ -129,7 +129,7 @@ test("consolePublicApiErrorReporter handles missing optional diagnostic context 
     calls.push(args);
   };
 
-  const LOG_PREFIX = "[stellarcore:public-api] ";
+  const LOG_PREFIX = "[corridorlens:public-api] ";
   const entry = (index: number) => {
     const line = String(calls[index]?.[0]);
     assert.equal(line.startsWith(LOG_PREFIX), true);

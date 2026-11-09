@@ -36,7 +36,7 @@ jobs:
 
       - name: Generate Prisma client
         env:
-          DATABASE_URL: postgresql://stellarcore:stellarcore@localhost:5432/stellarcore
+          DATABASE_URL: postgresql://corridorlens:corridorlens@localhost:5432/corridorlens
         run: npx prisma generate
 
       - name: Run CSP regression tests
@@ -47,18 +47,18 @@ jobs:
 
       - name: Build application
         env:
-          DATABASE_URL: postgresql://stellarcore:stellarcore@localhost:5432/stellarcore
-          STELLARCORE_ENVIRONMENT: ci
+          DATABASE_URL: postgresql://corridorlens:corridorlens@localhost:5432/corridorlens
+          CORRIDORLENS_ENVIRONMENT: ci
         run: npm run build
 
       - name: Verify production response headers and nonce rendering
         env:
-          DATABASE_URL: postgresql://stellarcore:stellarcore@localhost:5432/stellarcore
-          STELLARCORE_ENVIRONMENT: ci
+          DATABASE_URL: postgresql://corridorlens:corridorlens@localhost:5432/corridorlens
+          CORRIDORLENS_ENVIRONMENT: ci
         shell: bash
         run: |
           set -euo pipefail
-          npm run start -- -p 3010 > /tmp/stellarcore-next.log 2>&1 &
+          npm run start -- -p 3010 > /tmp/corridorlens-next.log 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
 
@@ -81,7 +81,7 @@ jobs:
           test -n "$NONCE2"
           test "$NONCE1" != "$NONCE2"
           grep -Fq "nonce=\"$NONCE1\"" /tmp/page-1.html
-          grep -Fq "STELLARCORE" /tmp/page-1.html
+          grep -Fq "CORRIDORLENS" /tmp/page-1.html
 
           grep -qi '^x-content-type-options: nosniff' /tmp/page-headers-1
           grep -qi '^x-frame-options: DENY' /tmp/page-headers-1

@@ -3,10 +3,10 @@ import { auditCronCadenceConfiguration } from "@/lib/config/cronCadence";
 
 export async function main(): Promise<void> {
   try {
-    const { auditCurrentStellarCoreConfiguration } = await import(
-      "@/lib/config/currentStellarCoreConfiguration"
+    const { auditCurrentCorridorLensConfiguration } = await import(
+      "@/lib/config/currentCorridorLensConfiguration"
     );
-    const registryResult = auditCurrentStellarCoreConfiguration();
+    const registryResult = auditCurrentCorridorLensConfiguration();
     const cronResult = auditCronCadenceConfiguration(vercelConfiguration);
     const issues = Object.freeze([...registryResult.issues, ...cronResult.issues]);
     const ok = registryResult.ok && cronResult.ok;

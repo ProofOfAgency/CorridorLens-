@@ -1,6 +1,6 @@
 # Production PostgreSQL TLS policy (issue #181)
 
-StellarCore requires authenticated, certificate-verified TLS for production
+CorridorLens requires authenticated, certificate-verified TLS for production
 PostgreSQL connections. Database credentials and evidence traffic must never
 silently fall back to unverified transport. This document is the normative
 policy; the implementation is `lib/database/tlsPolicy.ts` (pure decision
@@ -22,7 +22,7 @@ make driver-default transport unsafe for production evidence traffic:
    to unverified transport (`rejectUnauthorized: false`) when interpreted by
    the driver alone, and `ssl=no-verify`/`sslmode=no-verify` do so explicitly.
 
-StellarCore therefore classifies the URL and environment itself, strips all
+CorridorLens therefore classifies the URL and environment itself, strips all
 TLS parameters from the connection string handed to the driver, and passes an
 explicit ssl object — `rejectUnauthorized: true`, plus a CA when configured —
 directly in the Pool config. The application, not the URL, has the last word
@@ -62,11 +62,11 @@ resolves it deterministically:
    reads them in production.
 3. **URL certificate parameters are not a CA source.** `sslrootcert`, `sslcert`
    and `sslkey` are stripped with the other TLS parameters and never become the
-   ssl config's CA; configure the CA via `STELLARCORE_DB_CA` or
-   `STELLARCORE_DB_CA_PATH`.
+   ssl config's CA; configure the CA via `CORRIDORLENS_DB_CA` or
+   `CORRIDORLENS_DB_CA_PATH`.
 4. **Inline CA wins over the CA path, but a broken path still fails.**
-   `STELLARCORE_DB_CA` is used when both are set; a configured
-   `STELLARCORE_DB_CA_PATH` that cannot be read rejects production startup
+   `CORRIDORLENS_DB_CA` is used when both are set; a configured
+   `CORRIDORLENS_DB_CA_PATH` that cannot be read rejects production startup
    (`PRODUCTION_TLS_CA_MISSING`) even when an inline CA is present, so a
    misconfiguration is surfaced rather than masked. A whitespace-only inline CA
    counts as unset.
@@ -87,8 +87,8 @@ serialize rejections and assert credential and hostname absence.
 Two optional variables supply a provider CA when the server does not chain to
 public roots:
 
-- `STELLARCORE_DB_CA` — the PEM certificate inline.
-- `STELLARCORE_DB_CA_PATH` — a filesystem path to the PEM.
+- `CORRIDORLENS_DB_CA` — the PEM certificate inline.
+- `CORRIDORLENS_DB_CA_PATH` — a filesystem path to the PEM.
 
 Precedence: inline CA wins; the file path is read only when no inline CA is
 set and the file exists. CA material flows only into the ssl config object;
@@ -104,7 +104,7 @@ incidents (for example, a provider rotating to an interim certificate that
 cannot be pinned immediately). It is inert unless the environment variable
 
 ```
-STELLARCORE_DB_TLS_EMERGENCY_BYPASS=allow-unverified
+CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS=allow-unverified
 ```
 
 is set to exactly that value. Behavior when active:
@@ -123,11 +123,11 @@ posture; monitoring should alert on its activation.
 
 ## Exceptions and their limits
 
-Development and test runtimes use the validated `STELLARCORE_ENVIRONMENT`
+Development and test runtimes use the validated `CORRIDORLENS_ENVIRONMENT`
 identity from the shared runtime configuration boundary and keep permissive behavior: local
 Postgres without TLS keeps working, and explicitly requested TLS modes are
 honored. The exception cannot silently activate in production: the decision
-branches exclusively on `NODE_ENV`/`STELLARCORE_DEPLOYMENT` values, and the
+branches exclusively on `NODE_ENV`/`CORRIDORLENS_DEPLOYMENT` values, and the
 same configuration that resolves to plaintext in development resolves to a
 hard rejection in production (covered by tests).
 
@@ -136,9 +136,9 @@ hard rejection in production (covered by tests).
 | Variable | Purpose | Safety notes |
 |---|---|---|
 | `DATABASE_URL` | PostgreSQL connection. TLS URL parameters are sanitized before connecting; policy owns transport. | Never committed; never logged. |
-| `STELLARCORE_DB_CA_PATH` | File path to the provider CA PEM when the server does not chain to public roots. | Path only; the certificate is loaded into the ssl config at runtime and never logged. |
-| `STELLARCORE_DB_CA` | Inline provider CA PEM (fallback when no path is configured). | Certificate material; never committed, never logged. |
-| `STELLARCORE_DB_TLS_EMERGENCY_BYPASS` | Gated verification bypass; must equal exactly `allow-unverified` to activate. | Inert by default; activation prints a process warning; never enables plaintext. |
+| `CORRIDORLENS_DB_CA_PATH` | File path to the provider CA PEM when the server does not chain to public roots. | Path only; the certificate is loaded into the ssl config at runtime and never logged. |
+| `CORRIDORLENS_DB_CA` | Inline provider CA PEM (fallback when no path is configured). | Certificate material; never committed, never logged. |
+| `CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS` | Gated verification bypass; must equal exactly `allow-unverified` to activate. | Inert by default; activation prints a process warning; never enables plaintext. |
 
 Mirror these names (without values) in `.env.example` when provisioning a new
 environment; CA values and the bypass belong in the platform's secret store,

@@ -42,12 +42,12 @@ jobs:
       - name: Generate release manifest
         run: npm run release:manifest
         env:
-          STELLARCORE_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
-          STELLARCORE_WORKFLOW_REF: ${{ github.workflow_ref }}
-          STELLARCORE_INVOCATION_ID: ${{ github.run_id }}
-          STELLARCORE_ENVIRONMENT_ID: production
+          CORRIDORLENS_COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
+          CORRIDORLENS_WORKFLOW_REF: ${{ github.workflow_ref }}
+          CORRIDORLENS_INVOCATION_ID: ${{ github.run_id }}
+          CORRIDORLENS_ENVIRONMENT_ID: production
 
       - name: Verify release manifest
         run: npm run verify:release
         env:
-          STELLARCORE_RELEASE_DIR: dist-release
+          CORRIDORLENS_RELEASE_DIR: dist-release

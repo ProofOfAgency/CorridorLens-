@@ -1,7 +1,7 @@
 /**
- * Runtime configuration validation for StellarCore.
+ * Runtime configuration validation for CorridorLens.
  *
- * Centralizes and validates StellarCore's runtime environment configuration so
+ * Centralizes and validates CorridorLens's runtime environment configuration so
  * invalid or missing production settings fail early with clear, safe diagnostics
  * instead of surfacing later inside unrelated request paths.
  *
@@ -22,23 +22,23 @@ import {
   resolveRuntimeEnvironment,
 } from "@/lib/config/environmentGuard";
 
-/** All known runtime environment variables for StellarCore. */
+/** All known runtime environment variables for CorridorLens. */
 export const RUNTIME_ENV_KEYS = [
   "DATABASE_URL",
   "CRON_SECRET",
   "CRON_SECRET_PREVIOUS",
   "CRON_SECRET_ROTATION_UNTIL",
-  "STELLARCORE_ENVIRONMENT",
+  "CORRIDORLENS_ENVIRONMENT",
   "VERCEL_ENV",
   "NODE_ENV",
   "RATE_FRESHNESS_THRESHOLD_MS",
   "MIN_FRESH_SOURCES",
-  "STELLARCORE_CONFIG_FINGERPRINT",
-  "STELLARCORE_CONFIG_DRIFT_POLICY",
-  "STELLARCORE_DEPLOYMENT_REVISION",
-  "STELLARCORE_DB_CA",
-  "STELLARCORE_DB_CA_PATH",
-  "STELLARCORE_DB_TLS_EMERGENCY_BYPASS",
+  "CORRIDORLENS_CONFIG_FINGERPRINT",
+  "CORRIDORLENS_CONFIG_DRIFT_POLICY",
+  "CORRIDORLENS_DEPLOYMENT_REVISION",
+  "CORRIDORLENS_DB_CA",
+  "CORRIDORLENS_DB_CA_PATH",
+  "CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS",
 ] as const;
 
 export type RuntimeEnvKey = (typeof RUNTIME_ENV_KEYS)[number];
@@ -70,7 +70,7 @@ export type RuntimeConfigError =
   | Readonly<{ ok: false; code: "MISSING_REQUIRED"; variable: RuntimeEnvKey; environment: DatabaseEnvironmentId }>
   | Readonly<{ ok: false; code: "INVALID_DATABASE_URL"; variable: "DATABASE_URL"; environment: DatabaseEnvironmentId; reason: string }>
   | Readonly<{ ok: false; code: "INVALID_NUMERIC"; variable: "RATE_FRESHNESS_THRESHOLD_MS" | "MIN_FRESH_SOURCES"; environment: DatabaseEnvironmentId; reason: string }>
-  | Readonly<{ ok: false; code: "INVALID_ENVIRONMENT"; variable: "STELLARCORE_ENVIRONMENT" | "VERCEL_ENV"; environment: string }>
+  | Readonly<{ ok: false; code: "INVALID_ENVIRONMENT"; variable: "CORRIDORLENS_ENVIRONMENT" | "VERCEL_ENV"; environment: string }>
   | Readonly<{ ok: false; code: "MISSING_RUNTIME_ENVIRONMENT" }>
   | Readonly<{ ok: false; code: "RUNTIME_ENVIRONMENT_INVALID"; environment: string }>
   | Readonly<{ ok: false; code: "CRON_SECRET_REQUIRED_IN_PRODUCTION"; environment: "production" }>;
@@ -163,7 +163,7 @@ export function validateRuntimeConfig(env: EnvInput = process.env): RuntimeConfi
     return {
       ok: false,
       code: "RUNTIME_ENVIRONMENT_INVALID",
-      environment: env.STELLARCORE_ENVIRONMENT ?? env.VERCEL_ENV ?? "(unknown)",
+      environment: env.CORRIDORLENS_ENVIRONMENT ?? env.VERCEL_ENV ?? "(unknown)",
     };
   }
 
@@ -240,7 +240,7 @@ export function validateRuntimeConfig(env: EnvInput = process.env): RuntimeConfi
 
   // Determine environment source for diagnostics.
   let environmentSource: RuntimeConfig["environmentSource"];
-  if (env.STELLARCORE_ENVIRONMENT?.trim()) {
+  if (env.CORRIDORLENS_ENVIRONMENT?.trim()) {
     environmentSource = "explicit-env";
   } else if (env.VERCEL_ENV?.trim()) {
     environmentSource = "vercel-env";
@@ -340,7 +340,7 @@ function formatConfigErrorMessage(error: RuntimeConfigError): string {
     case "INVALID_ENVIRONMENT":
       return `Invalid environment value for ${error.variable}: "${error.environment}"`;
     case "MISSING_RUNTIME_ENVIRONMENT":
-      return "Runtime environment not configured. Set STELLARCORE_ENVIRONMENT (production|preview|development|test|ci) or run on Vercel with VERCEL_ENV, or run under NODE_ENV=test.";
+      return "Runtime environment not configured. Set CORRIDORLENS_ENVIRONMENT (production|preview|development|test|ci) or run on Vercel with VERCEL_ENV, or run under NODE_ENV=test.";
     case "RUNTIME_ENVIRONMENT_INVALID":
       return `Invalid runtime environment: "${error.environment}". Allowed: production, preview, development, test, ci`;
     case "CRON_SECRET_REQUIRED_IN_PRODUCTION":

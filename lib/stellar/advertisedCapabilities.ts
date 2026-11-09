@@ -16,7 +16,7 @@ const KNOWN_ADVERTISED_CAPABILITIES = Object.freeze([
 /**
  * Maps only known persisted SEP numbers to cautious presentation labels. These
  * labels describe metadata observed during the last successful SEP-1 sync;
- * they do not verify current anchor operation or StellarCore authority.
+ * they do not verify current anchor operation or CorridorLens authority.
  */
 export function advertisedCapabilities(
   seps: readonly number[],

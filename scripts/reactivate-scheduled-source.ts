@@ -1,14 +1,14 @@
 import { PRISMA_SUPPRESSION_REPOSITORY } from "@/lib/scheduled/suppressionRepository";
 
 const anchorSlug = requiredSlug(
-  process.env.STELLARCORE_REACTIVATE_ANCHOR,
-  "STELLARCORE_REACTIVATE_ANCHOR",
+  process.env.CORRIDORLENS_REACTIVATE_ANCHOR,
+  "CORRIDORLENS_REACTIVATE_ANCHOR",
 );
 const corridorSlug = requiredSlug(
-  process.env.STELLARCORE_REACTIVATE_CORRIDOR,
-  "STELLARCORE_REACTIVATE_CORRIDOR",
+  process.env.CORRIDORLENS_REACTIVATE_CORRIDOR,
+  "CORRIDORLENS_REACTIVATE_CORRIDOR",
 );
-const reason = requiredReason(process.env.STELLARCORE_REACTIVATE_REASON);
+const reason = requiredReason(process.env.CORRIDORLENS_REACTIVATE_REASON);
 
 const result = await PRISMA_SUPPRESSION_REPOSITORY.reactivate({
   anchorSlug,
@@ -52,11 +52,11 @@ function requiredReason(value: string | undefined): string {
   const normalized = value?.trim() ?? "";
   if (normalized.length < 8 || normalized.length > 500) {
     throw new Error(
-      "STELLARCORE_REACTIVATE_REASON must contain 8-500 reviewed characters",
+      "CORRIDORLENS_REACTIVATE_REASON must contain 8-500 reviewed characters",
     );
   }
   if (/[\u0000-\u001f\u007f]/.test(normalized)) {
-    throw new Error("STELLARCORE_REACTIVATE_REASON contains control characters");
+    throw new Error("CORRIDORLENS_REACTIVATE_REASON contains control characters");
   }
   return normalized;
 }

@@ -1,5 +1,5 @@
 
-# StellarCore architecture
+# CorridorLens architecture
 
 This document describes the behavior implemented in the current repository.
 It is a prose companion to the system diagrams and does not describe planned
@@ -7,7 +7,7 @@ features as if they were production behavior.
 
 ## System shape
 
-StellarCore is a Next.js App Router application backed by PostgreSQL through
+CorridorLens is a Next.js App Router application backed by PostgreSQL through
 Prisma. The browser dashboard and public API are read-only consumers of
 persisted, bounded read models. Maintenance work is performed by explicit
 scripts or the authenticated internal refresh route; public requests do not

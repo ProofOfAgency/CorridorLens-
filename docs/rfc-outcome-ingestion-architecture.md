@@ -2,12 +2,12 @@
 
 - **Status:** Proposed for maintainer decision
 - **Date:** 2026-09-24
-- **Issue:** [#20](https://github.com/Aboyeji-Isaac/StellarCore/issues/20)
+- **Issue:** [#20](https://github.com/ProofOfAgency/CorridorLens/issues/20)
 - **Scope:** Research and architecture only
 
 ## Decision summary
 
-StellarCore should not begin production outcome ingestion by choosing a single verification technology. The trust model, evidence contract, source authorization, correction policy, and privacy controls must be agreed before any writer is introduced.
+CorridorLens should not begin production outcome ingestion by choosing a single verification technology. The trust model, evidence contract, source authorization, correction policy, and privacy controls must be agreed before any writer is introduced.
 
 The recommended starting point is a **bounded, manually reviewed discovery pilot with one consenting anchor and one reviewed corridor**. The pilot should remain outside production and should not write to `TransferOutcome` or affect reputation scores. Its purpose is to learn whether a source can report complete terminal outcomes, what evidence is reproducible, and which failures are omitted or ambiguous.
 
@@ -17,7 +17,7 @@ This RFC recommends a starting point for maintainer discussion. It does not sele
 
 ## Problem
 
-StellarCore already has a normalized `TransferOutcome` model and deterministic reputation calculations, but it has no authorized production source for those outcomes. The current system deliberately keeps public APIs read-only and does not infer completion from Horizon, a successful Stellar payment, or SEP capability metadata.
+CorridorLens already has a normalized `TransferOutcome` model and deterministic reputation calculations, but it has no authorized production source for those outcomes. The current system deliberately keeps public APIs read-only and does not infer completion from Horizon, a successful Stellar payment, or SEP capability metadata.
 
 An ingestion design must answer a harder question than “did some payment succeed?” It must establish:
 
@@ -27,7 +27,7 @@ An ingestion design must answer a harder question than “did some payment succe
 4. **When did the transfer reach its terminal state?**
 5. **What evidence supports the status?**
 6. **How are duplicates, corrections, reversals, and source outages handled?**
-7. **What may StellarCore publicly claim?**
+7. **What may CorridorLens publicly claim?**
 
 A successful payment on Stellar can establish that a payment operation succeeded. It cannot, by itself, establish that an anchor accepted the intended deposit, that a bank transfer or fiat payout cleared, or that the customer received the expected value. Any architecture that collapses those facts into an unqualified `COMPLETED` outcome would create false evidence.
 
@@ -35,7 +35,7 @@ A successful payment on Stellar can establish that a payment operation succeeded
 
 The current production architecture has several properties that any future ingestion boundary must preserve:
 
-- StellarCore is an intelligence layer, not a transfer executor.
+- CorridorLens is an intelligence layer, not a transfer executor.
 - Public anchor, corridor, rate, and reputation APIs are read-only.
 - Anchor and corridor relationships come from reviewed registries.
 - The scheduled refresh ingests reviewed indicative-rate observations and then evaluates persisted reputation evidence. It does not ingest transfer outcomes.
@@ -80,7 +80,7 @@ A conceptual provenance envelope would need, at minimum:
 - source type and stable source identity;
 - source event ID and event version;
 - anchor and reviewed corridor identity;
-- source-native status and StellarCore's versioned status mapping;
+- source-native status and CorridorLens's versioned status mapping;
 - source event time, evidence received time, and optional on-chain observation time;
 - source amounts and assets without unnecessary customer data;
 - evidence hash or protected reference;
@@ -101,7 +101,7 @@ Every approach must satisfy the requirements below before any production writer 
 - The source must be authorized to report outcomes for the named anchor and corridor.
 - The source identity must be bound to a reviewed registry identity, not accepted from an arbitrary request.
 - Authentication must be server-side, secret-bearing credentials must remain server-only, and keys must have rotation, revocation, and emergency-disable procedures.
-- StellarCore currently discovers SEP-1 metadata and uses scoped SEP-10 authentication; it does not currently persist an outcome-signing trust root or implement a SEP-45 outcome boundary.
+- CorridorLens currently discovers SEP-1 metadata and uses scoped SEP-10 authentication; it does not currently persist an outcome-signing trust root or implement a SEP-45 outcome boundary.
 - SEP-10 authentication, and SEP-45 if separately adopted, can establish a scoped customer or participant session; neither is, by itself, durable outcome provenance.
 
 ### Event identity and idempotency
@@ -142,7 +142,7 @@ Every approach must satisfy the requirements below before any production writer 
 
 ### Publication policy
 
-StellarCore must describe evidence at the confidence level actually obtained:
+CorridorLens must describe evidence at the confidence level actually obtained:
 
 - `on-chain observed` is not `off-chain completed`;
 - `anchor attested` is not `independently verified`;
@@ -153,7 +153,7 @@ StellarCore must describe evidence at the confidence level actually obtained:
 
 ### Model
 
-An anchor signs a versioned, canonical statement for a terminal transfer or a batch. The statement binds a stable event ID and version, anchor and corridor identity, event time, terminal status, transfer amounts, and the evidence needed to support the claim. StellarCore verifies the signature against a reviewed, domain-bound trust root. For batches, the signed commitment must bind every included event so an event cannot be added, removed, or reordered after signing.
+An anchor signs a versioned, canonical statement for a terminal transfer or a batch. The statement binds a stable event ID and version, anchor and corridor identity, event time, terminal status, transfer amounts, and the evidence needed to support the claim. CorridorLens verifies the signature against a reviewed, domain-bound trust root. For batches, the signed commitment must bind every included event so an event cannot be added, removed, or reordered after signing.
 
 A SEP-1 `SIGNING_KEY` is a possible discovery input, but it is documented for SEP-10 authentication and is not persisted as an outcome trust root in the current repository. It should not be repurposed for outcome attestation without explicit agreement. A dedicated outcome-signing trust root, or a formally authorized use of an existing key, is required.
 
@@ -193,7 +193,7 @@ Conditional long-term production candidate when partner cooperation, maintainer 
 
 ### Model
 
-StellarCore correlates indexed public Stellar payment operations, accounts, assets, memos, amounts, and ledger timing with a reviewed anchor, corridor, and transfer event. The result is a reproducible public-ledger observation at a stated finality policy that may support or contradict another evidence source. Horizon is an API/indexer, not an authority that proves the business meaning of an operation.
+CorridorLens correlates indexed public Stellar payment operations, accounts, assets, memos, amounts, and ledger timing with a reviewed anchor, corridor, and transfer event. The result is a reproducible public-ledger observation at a stated finality policy that may support or contradict another evidence source. Horizon is an API/indexer, not an authority that proves the business meaning of an operation.
 
 ### Advantages
 
@@ -422,7 +422,7 @@ A future implementation should not begin unless maintainers can answer yes to al
 
 ## Conclusion
 
-StellarCore's immediate need is not a faster parser or an inferred on-chain outcome. It needs a defensible chain of authority, evidence, review, and correction. A bounded manual discovery pilot is the lowest-regret way to learn those requirements without turning a sparse data model into a public trust claim. Anchor-signed attestations are a conditional production candidate if maintainers approve the model, partner commitments are credible, and every governance gate succeeds, with Horizon used only for the leg it can actually observe. Escrow or an independent settlement attestor remains a later option whose value depends on real independence rather than naming or signature alone.
+CorridorLens's immediate need is not a faster parser or an inferred on-chain outcome. It needs a defensible chain of authority, evidence, review, and correction. A bounded manual discovery pilot is the lowest-regret way to learn those requirements without turning a sparse data model into a public trust claim. Anchor-signed attestations are a conditional production candidate if maintainers approve the model, partner commitments are credible, and every governance gate succeeds, with Horizon used only for the leg it can actually observe. Escrow or an independent settlement attestor remains a later option whose value depends on real independence rather than naming or signature alone.
 
 ## Repository references
 

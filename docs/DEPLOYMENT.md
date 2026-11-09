@@ -1,6 +1,6 @@
 # Production deployment
 
-StellarCore is prepared for a Vercel deployment backed by managed PostgreSQL and Prisma ORM. This guide prepares deployment only; it does not provision or modify hosted services.
+CorridorLens is prepared for a Vercel deployment backed by managed PostgreSQL and Prisma ORM. This guide prepares deployment only; it does not provision or modify hosted services.
 
 ## Architecture
 
@@ -15,12 +15,12 @@ StellarCore is prepared for a Vercel deployment backed by managed PostgreSQL and
 | --- | --- | --- | --- |
 | `DATABASE_URL` | Required | Yes | Server-only PostgreSQL connection appropriate to the running environment. The protected migration workflow separately configures its direct Prisma Postgres credential under this secret name. |
 | `CRON_SECRET` | Required when cron is enabled | Yes | Bearer secret Vercel sends to the refresh route. |
-| `STELLARCORE_ENVIRONMENT` | Set to `production` | No | Explicit runtime environment identity checked against the database's durable stamp before any evidence access (#143). On Vercel, `VERCEL_ENV` is used automatically when this is absent. |
-| `STELLARCORE_STAMP_ENVIRONMENT` | Migration workflow only | No | Stamp target for `npm run stamp:environment`; names the identity written into the database's `database_environment` table. |
+| `CORRIDORLENS_ENVIRONMENT` | Set to `production` | No | Explicit runtime environment identity checked against the database's durable stamp before any evidence access (#143). On Vercel, `VERCEL_ENV` is used automatically when this is absent. |
+| `CORRIDORLENS_STAMP_ENVIRONMENT` | Migration workflow only | No | Stamp target for `npm run stamp:environment`; names the identity written into the database's `database_environment` table. |
 
 ## Environment isolation (#143)
 
-Every runtime declares which environment it runs in (`STELLARCORE_ENVIRONMENT`
+Every runtime declares which environment it runs in (`CORRIDORLENS_ENVIRONMENT`
 or Vercel's `VERCEL_ENV`; `NODE_ENV=test` resolves to `test` in test runs), and
 every database carries a durable identity stamp in its
 `database_environment` table (created by migration
@@ -35,7 +35,7 @@ Rules for operators:
 
 - Stamp each database exactly once, immediately after its migrations, using
   the protected migration workflow (which runs `npm run stamp:environment`
-  with `STELLARCORE_STAMP_ENVIRONMENT=production` after
+  with `CORRIDORLENS_STAMP_ENVIRONMENT=production` after
   `prisma migrate deploy`). The stamp script is idempotent for the same
   identity and refuses to rewrite a different existing identity.
 - Application runtimes hold read privilege on the stamp only; the migration
@@ -59,10 +59,10 @@ Production rejects plaintext and verification-bypass URL modes.
 
 Providers using public certificate roots require no extra setting. For private
 or provider-specific roots, configure either server-only
-`STELLARCORE_DB_CA` or `STELLARCORE_DB_CA_PATH`. A configured CA path that
+`CORRIDORLENS_DB_CA` or `CORRIDORLENS_DB_CA_PATH`. A configured CA path that
 cannot be read fails production startup rather than silently falling back.
 
-The incident-only `STELLARCORE_DB_TLS_EMERGENCY_BYPASS=allow-unverified`
+The incident-only `CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS=allow-unverified`
 permits encrypted but unverified TLS, never plaintext. It is production-only,
 emits a bounded warning without credentials or certificate material, and must
 be removed after the incident. See
@@ -80,17 +80,17 @@ minimum fresh-source policy, and only boolean presence metadata for
 in fingerprint material or release artifacts.
 
 `npm run release:manifest` records the fingerprint in
-`stellarcore-provenance.json` alongside the exact commit, lockfile digest,
+`corridorlens-provenance.json` alongside the exact commit, lockfile digest,
 toolchain, and SBOM digest. The GitHub release workflow attests that provenance
 with the existing OIDC-backed build attestation.
 
 At application startup, `instrumentation.ts` recomputes the active fingerprint
 from the validated runtime configuration and compares it with
-`STELLARCORE_CONFIG_FINGERPRINT`. The deployment revision comes from
-`STELLARCORE_DEPLOYMENT_REVISION`, then `VERCEL_GIT_COMMIT_SHA`, then
+`CORRIDORLENS_CONFIG_FINGERPRINT`. The deployment revision comes from
+`CORRIDORLENS_DEPLOYMENT_REVISION`, then `VERCEL_GIT_COMMIT_SHA`, then
 `GITHUB_SHA`.
 
-Mismatch handling is controlled by `STELLARCORE_CONFIG_DRIFT_POLICY`:
+Mismatch handling is controlled by `CORRIDORLENS_CONFIG_DRIFT_POLICY`:
 
 - `fail`: reject startup on a mismatch; this is the production default. A
   production deployment using this policy also rejects a missing expected
@@ -104,7 +104,7 @@ Mismatch handling is controlled by `STELLARCORE_CONFIG_DRIFT_POLICY`:
 Intentional configuration changes require a new reviewed release fingerprint:
 change the reviewed configuration or policy, generate the release provenance
 for the intended commit, set the deployment's
-`STELLARCORE_CONFIG_FINGERPRINT` to that attested value, and deploy the same
+`CORRIDORLENS_CONFIG_FINGERPRINT` to that attested value, and deploy the same
 revision. Never copy a fingerprint between revisions.
 
 Startup diagnostics expose only the fingerprint, revision, policy, and drift
@@ -271,9 +271,9 @@ The locally verified run took about ten seconds. At the current reviewed scope o
 
 Production releases carry a reproducible software-supply-chain record:
 
-- `npm run release:manifest` emits `dist-release/stellarcore-sbom.json`
+- `npm run release:manifest` emits `dist-release/corridorlens-sbom.json`
   (CycloneDX 1.5 SBOM of the locked **production** dependency graph) and
-  `dist-release/stellarcore-provenance.json` (commit SHA, workflow run
+  `dist-release/corridorlens-provenance.json` (commit SHA, workflow run
   reference, invocation id, environment identity, Node/npm versions, the
   SHA-256 digest of the `package-lock.json` used for installation, and the
   deployment-bound runtime configuration fingerprint).
@@ -321,9 +321,9 @@ protocol mismatch has been corrected, an operator supplies a reviewed reason
 and runs:
 
 ```bash
-STELLARCORE_REACTIVATE_ANCHOR="anchor-slug" \
-STELLARCORE_REACTIVATE_CORRIDOR="corridor-slug" \
-STELLARCORE_REACTIVATE_REASON="Reviewed correction in PR #..." \
+CORRIDORLENS_REACTIVATE_ANCHOR="anchor-slug" \
+CORRIDORLENS_REACTIVATE_CORRIDOR="corridor-slug" \
+CORRIDORLENS_REACTIVATE_REASON="Reviewed correction in PR #..." \
 npm run suppression:reactivate
 ```
 

@@ -1,9 +1,9 @@
 # Production release with SBOM and verifiable build provenance (#142).
 #
 # Every production build emits:
-#   1. stellarcore-sbom.json        — CycloneDX 1.5 SBOM of the locked
+#   1. corridorlens-sbom.json        — CycloneDX 1.5 SBOM of the locked
 #                                     production dependency graph.
-#   2. stellarcore-provenance.json  — provenance record binding the SBOM to
+#   2. corridorlens-provenance.json  — provenance record binding the SBOM to
 #                                     the exact commit, workflow run, Node/npm
 #                                     versions, and the package-lock.json
 #                                     SHA-256 digest used for installation.
@@ -65,22 +65,22 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Capture npm version
-        run: echo "STELLARCORE_NPM_VERSION=$(npm --version)" >> "$GITHUB_ENV"
+        run: echo "CORRIDORLENS_NPM_VERSION=$(npm --version)" >> "$GITHUB_ENV"
 
       - name: Generate release manifest (SBOM + provenance)
         run: npm run release:manifest
         env:
-          STELLARCORE_COMMIT_SHA: ${{ github.sha }}
-          STELLARCORE_WORKFLOW_REF: ${{ github.workflow_ref }}
-          STELLARCORE_INVOCATION_ID: ${{ github.run_id }}
-          STELLARCORE_ENVIRONMENT_ID: production
+          CORRIDORLENS_COMMIT_SHA: ${{ github.sha }}
+          CORRIDORLENS_WORKFLOW_REF: ${{ github.workflow_ref }}
+          CORRIDORLENS_INVOCATION_ID: ${{ github.run_id }}
+          CORRIDORLENS_ENVIRONMENT_ID: production
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: |
-            dist-release/stellarcore-sbom.json
-            dist-release/stellarcore-provenance.json
+            dist-release/corridorlens-sbom.json
+            dist-release/corridorlens-provenance.json
 
       # Verification must pass before anything is published. This detects:
       # - a deliberately mismatched artifact/attestation fixture,
@@ -89,14 +89,14 @@ jobs:
       - name: Verify release manifest
         run: npm run verify:release
         env:
-          STELLARCORE_RELEASE_DIR: dist-release
+          CORRIDORLENS_RELEASE_DIR: dist-release
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: stellarcore-release-manifest-${{ github.run_id }}
+          name: corridorlens-release-manifest-${{ github.run_id }}
           path: |
-            dist-release/stellarcore-sbom.json
-            dist-release/stellarcore-provenance.json
+            dist-release/corridorlens-sbom.json
+            dist-release/corridorlens-provenance.json
           retention-days: 90
           if-no-files-found: error

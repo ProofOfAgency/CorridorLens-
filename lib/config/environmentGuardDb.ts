@@ -28,13 +28,13 @@ export type VerifiedEnvironment = Readonly<{
 }>;
 
 const globalForEnvironmentGuard = globalThis as unknown as {
-  stellarCoreVerifiedEnvironment?: VerifiedEnvironment;
+  corridorLensVerifiedEnvironment?: VerifiedEnvironment;
 };
 
 export async function assertDatabaseEnvironmentMatchesRuntime(
   client: Pick<PrismaClient, "$queryRaw">,
 ): Promise<VerifiedEnvironment> {
-  const cached = globalForEnvironmentGuard.stellarCoreVerifiedEnvironment;
+  const cached = globalForEnvironmentGuard.corridorLensVerifiedEnvironment;
   if (cached) return cached;
 
   const runtime = resolveRuntimeEnvironment();
@@ -60,12 +60,12 @@ export async function assertDatabaseEnvironmentMatchesRuntime(
     runtimeEnvironment: runtime.environment,
     databaseEnvironment: verdict.environment,
   });
-  globalForEnvironmentGuard.stellarCoreVerifiedEnvironment = verified;
+  globalForEnvironmentGuard.corridorLensVerifiedEnvironment = verified;
   return verified;
 }
 
 export function resetEnvironmentGuardCacheForTests(): void {
-  globalForEnvironmentGuard.stellarCoreVerifiedEnvironment = undefined;
+  globalForEnvironmentGuard.corridorLensVerifiedEnvironment = undefined;
 }
 
 async function readDatabaseEnvironmentStamp(

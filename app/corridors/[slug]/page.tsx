@@ -15,11 +15,11 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const result = await getCorridorApiResult(slug);
-  if (result.status !== 200) return { title: "Corridor not found — StellarCore" };
+  if (result.status !== 200) return { title: "Corridor not found — CorridorLens" };
 
   const { corridor } = result.body;
   return {
-    title: `${corridor.sourceAsset} → ${corridor.destinationAsset} — StellarCore`,
+    title: `${corridor.sourceAsset} → ${corridor.destinationAsset} — CorridorLens`,
     description: `Read-only evidence for the ${corridor.sourceCountry} to ${corridor.destinationCountry} corridor.`,
   };
 }
@@ -53,7 +53,7 @@ export default async function CorridorPage({ params }: Props) {
               {corridor.sourceAsset} ({corridor.sourceCountry}) → {corridor.destinationAsset} ({corridor.destinationCountry})
             </h1>
             <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
-              Read-only corridor evidence from StellarCore&apos;s persisted APIs. Configuration and advertised
+              Read-only corridor evidence from CorridorLens&apos;s persisted APIs. Configuration and advertised
               interfaces are shown separately from current rate observations.
             </p>
           </header>

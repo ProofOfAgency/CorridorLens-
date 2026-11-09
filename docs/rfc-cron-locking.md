@@ -2,7 +2,7 @@
 
 ## Context
 
-StellarCore currently runs one Vercel Cron invocation at midnight UTC. The
+CorridorLens currently runs one Vercel Cron invocation at midnight UTC. The
 refresh route ingests the reviewed live-rate sources and then evaluates
 persisted anchor reputation. A single function is adequate for the current
 three-anchor scope, but it is not a safe scaling boundary: a timeout can leave
@@ -13,7 +13,7 @@ set grows materially. It does not implement a lock or change the existing cron.
 
 ## Recommendation: PostgreSQL advisory lock with bounded ownership
 
-Use a transaction-scoped PostgreSQL advisory lock keyed to a stable StellarCore
+Use a transaction-scoped PostgreSQL advisory lock keyed to a stable CorridorLens
 refresh identifier. The refresh entrypoint would attempt `pg_try_advisory_lock`
 before doing work and return a non-error `already_running` result when another
 invocation owns the cycle. The lock connection must remain checked out for the

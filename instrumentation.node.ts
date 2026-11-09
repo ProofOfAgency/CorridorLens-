@@ -23,7 +23,7 @@ export async function registerNodeInstrumentation(): Promise<void> {
     throw new Error(`Database TLS policy failure (${code}): ${message}`);
   }
   if (tls.emergencyBypassActive) {
-    console.warn("[stellarcore:database] emergency TLS verification bypass active");
+    console.warn("[corridorlens:database] emergency TLS verification bypass active");
   }
 
   const {
@@ -33,7 +33,7 @@ export async function registerNodeInstrumentation(): Promise<void> {
   } = await import("@/lib/config/runtimeConfigFingerprint");
 
   const diagnostics = verifyRuntimeConfigFingerprint(config, {
-    expectedFingerprint: process.env.STELLARCORE_CONFIG_FINGERPRINT,
+    expectedFingerprint: process.env.CORRIDORLENS_CONFIG_FINGERPRINT,
     revision: resolveDeploymentRevision(process.env),
     policy: resolveRuntimeConfigFingerprintPolicy(config, process.env),
   });

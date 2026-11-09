@@ -25,18 +25,18 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Generate Prisma client
         env:
-          DATABASE_URL: postgresql://stellarcore:stellarcore@localhost:5432/stellarcore
+          DATABASE_URL: postgresql://corridorlens:corridorlens@localhost:5432/corridorlens
         run: npx prisma generate
       - run: npx tsc --noEmit
       - run: node --import tsx --test tests/unit/scheduled/cronRotation.test.ts tests/unit/scheduled/cronRoute.test.ts
       - run: npm run lint
       - name: Full tests
         env:
-          STELLARCORE_ENVIRONMENT: test
+          CORRIDORLENS_ENVIRONMENT: test
           DATABASE_URL: postgresql://test:test@localhost:5432/test
         run: npm test
       - name: Build
         env:
-          DATABASE_URL: postgresql://stellarcore:stellarcore@localhost:5432/stellarcore
-          STELLARCORE_ENVIRONMENT: ci
+          DATABASE_URL: postgresql://corridorlens:corridorlens@localhost:5432/corridorlens
+          CORRIDORLENS_ENVIRONMENT: ci
         run: npm run build

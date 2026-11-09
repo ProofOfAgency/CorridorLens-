@@ -63,7 +63,7 @@ test("readiness succeeds with documented minimal status fields when database is 
 
 test("readiness safely represents database failure without exposing evidence rows, internals, or stack traces", async () => {
   const sensitiveError = new Error(
-    "FATAL: password authentication failed for user 'postgres' at postgresql://admin:secret_pass@internal-host:5432/stellarcore\n" +
+    "FATAL: password authentication failed for user 'postgres' at postgresql://admin:secret_pass@internal-host:5432/corridorlens\n" +
     "at async checkDatabaseConnection (/app/lib/health/http.ts:12:3)\n" +
     "with evidence payload: { anchorSlug: 'zeam', rate: '0.170000000000000001' }",
   );

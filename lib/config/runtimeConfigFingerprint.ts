@@ -8,7 +8,7 @@ import {
 import { REVIEWED_LIVE_RATE_SOURCES } from "@/constants/liveRateSources";
 import type { RuntimeConfig } from "@/lib/config/runtimeConfig";
 
-export const RUNTIME_CONFIG_FINGERPRINT_VERSION = "stellarcore-runtime-config-v1";
+export const RUNTIME_CONFIG_FINGERPRINT_VERSION = "corridorlens-runtime-config-v1";
 
 export type RuntimeConfigFingerprintPolicy = "fail" | "degrade" | "warn";
 
@@ -122,7 +122,7 @@ export function resolveDeploymentRevision(
   env: Readonly<Record<string, string | undefined>> = process.env,
 ): string {
   return normalizeRevision(
-    env.STELLARCORE_DEPLOYMENT_REVISION ??
+    env.CORRIDORLENS_DEPLOYMENT_REVISION ??
       env.VERCEL_GIT_COMMIT_SHA ??
       env.GITHUB_SHA ??
       "local-unversioned",
@@ -133,7 +133,7 @@ export function resolveRuntimeConfigFingerprintPolicy(
   config: RuntimeConfig,
   env: Readonly<Record<string, string | undefined>> = process.env,
 ): RuntimeConfigFingerprintPolicy {
-  const raw = env.STELLARCORE_CONFIG_DRIFT_POLICY?.trim().toLowerCase();
+  const raw = env.CORRIDORLENS_CONFIG_DRIFT_POLICY?.trim().toLowerCase();
   if (raw === "fail" || raw === "degrade" || raw === "warn") return raw;
   return config.environment === "production" ? "fail" : "warn";
 }

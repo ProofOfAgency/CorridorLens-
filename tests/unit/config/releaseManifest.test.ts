@@ -43,7 +43,7 @@ test("provenance binds the SBOM to commit, lockfile digest, and toolchain", () =
   );
   assert.equal(
     manifest.provenance.runtimeConfiguration.fingerprintVersion,
-    "stellarcore-runtime-config-v1",
+    "corridorlens-runtime-config-v1",
   );
   // SBOM digest is computed over the emitted SBOM document.
   assert.match(manifest.provenance.artifact.sbomSha256, /^[0-9a-f]{64}$/);

@@ -2,11 +2,11 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  assertStellarCoreConfiguration,
-  auditStellarCoreConfiguration,
-  StellarCoreConfigurationAuditError,
-  type StellarCoreConfigurationInput,
-} from "@/lib/config/stellarCoreConfiguration";
+  assertCorridorLensConfiguration,
+  auditCorridorLensConfiguration,
+  CorridorLensConfigurationAuditError,
+  type CorridorLensConfigurationInput,
+} from "@/lib/config/corridorLensConfiguration";
 import {
   snapshotReviewedLiveRates,
   type SnapshotReviewedLiveRatesDependencies,
@@ -56,8 +56,8 @@ function source(
 }
 
 function configuration(
-  overrides: Partial<StellarCoreConfigurationInput> = {},
-): StellarCoreConfigurationInput {
+  overrides: Partial<CorridorLensConfigurationInput> = {},
+): CorridorLensConfigurationInput {
   return Object.freeze({
     anchors: [ANCHOR],
     corridors: [CORRIDOR],
@@ -72,7 +72,7 @@ test("a production mutation path fails closed when reviewed configuration eviden
   let executions = 0;
   const dependencies: SnapshotReviewedLiveRatesDependencies = {
     assertConfiguration: () =>
-      assertStellarCoreConfiguration(configuration({
+      assertCorridorLensConfiguration(configuration({
         reviewedLiveRateSources: [source({ anchorSlug: "ghost-anchor" })],
         anchorCorridorMappings: [],
       })),
@@ -89,7 +89,7 @@ test("a production mutation path fails closed when reviewed configuration eviden
   await assert.rejects(
     snapshotReviewedLiveRates(dependencies),
     (error) => {
-      assert.ok(error instanceof StellarCoreConfigurationAuditError);
+      assert.ok(error instanceof CorridorLensConfigurationAuditError);
       assert.ok(error.issues.some(({ code }) => code === "SOURCE_ANCHOR_NOT_FOUND"));
       return true;
     },
@@ -118,16 +118,16 @@ test("malformed reviewed evidence blocks the mutation path without secrets", () 
     ["stale duplicate identity", configuration({
       reviewedLiveRateSources: [source(), source()],
     })],
-  ] as const satisfies readonly (readonly [string, StellarCoreConfigurationInput])[]) {
-    const result = auditStellarCoreConfiguration(input);
+  ] as const satisfies readonly (readonly [string, CorridorLensConfigurationInput])[]) {
+    const result = auditCorridorLensConfiguration(input);
     assert.equal(result.ok, false, `${name} must fail`);
     assert.ok(result.issues.length > 0, `${name} must report its failure category`);
 
     assert.throws(
-      () => assertStellarCoreConfiguration(input),
+      () => assertCorridorLensConfiguration(input),
       (error) => {
-        assert.ok(error instanceof StellarCoreConfigurationAuditError);
-        assert.equal(error.code, "INVALID_STELLARCORE_CONFIGURATION");
+        assert.ok(error instanceof CorridorLensConfigurationAuditError);
+        assert.equal(error.code, "INVALID_CORRIDORLENS_CONFIGURATION");
         assert.ok(error.issues.length > 0);
         assert.ok(!JSON.stringify(error.issues).includes(ISSUER),
           "diagnostics never embed reviewed secret material");
@@ -139,7 +139,7 @@ test("malformed reviewed evidence blocks the mutation path without secrets", () 
 });
 
 test("diagnostics name the required prerequisite without exposing configuration text", () => {
-  const result = auditStellarCoreConfiguration(configuration({
+  const result = auditCorridorLensConfiguration(configuration({
     reviewedLiveRateSources: [source({ sellAmount: "not-a-number" })],
     corridors: [],
     anchorCorridorMappings: [],
@@ -158,7 +158,7 @@ test("valid reviewed configuration continues through the existing safeguards", a
   let builds = 0;
   const result = await snapshotReviewedLiveRates({
     assertConfiguration: () =>
-      assertStellarCoreConfiguration(configuration()),
+      assertCorridorLensConfiguration(configuration()),
     buildCandidates: async () => {
       builds += 1;
       return [];
@@ -166,7 +166,7 @@ test("valid reviewed configuration continues through the existing safeguards", a
     executeCandidates: async () => runSummary(),
   });
 
-  const audit = auditStellarCoreConfiguration(configuration());
+  const audit = auditCorridorLensConfiguration(configuration());
   assert.equal(audit.ok, true);
   assert.equal(audit.issues.length, 0);
   assert.equal(builds, 1);
@@ -174,7 +174,7 @@ test("valid reviewed configuration continues through the existing safeguards", a
 });
 
 test("every absent-prerequisite issue carries registry context without entry payloads", () => {
-  const result = auditStellarCoreConfiguration(
+  const result = auditCorridorLensConfiguration(
     configuration({ reviewedLiveRateSources: [source({ anchorSlug: "ghost" })] }),
   );
 

@@ -17,7 +17,7 @@ test("relative-path strategy returns clean root-relative path", () => {
     "/api/rates?corridor=usdc-us-brl-br",
   );
   assert.equal(
-    resolveApiUrl("/api/anchors", { strategy: "relative", baseUrl: "https://stellarcore.org" }),
+    resolveApiUrl("/api/anchors", { strategy: "relative", baseUrl: "https://corridorlens.org" }),
     "/api/anchors",
     "explicit strategy='relative' overrides configured baseUrl",
   );
@@ -52,10 +52,10 @@ test("local configuration resolves to local origin or relative consistently", ()
 
 test("preview configuration resolves from VERCEL_URL and NEXT_PUBLIC_API_URL", () => {
   // Vercel preview domain (bare host from VERCEL_URL)
-  const vercelEnv = { VERCEL_URL: "stellarcore-git-preview-branch.vercel.app" };
+  const vercelEnv = { VERCEL_URL: "corridorlens-git-preview-branch.vercel.app" };
   assert.equal(
     resolveApiUrl("/api/anchors", { env: vercelEnv }),
-    "https://stellarcore-git-preview-branch.vercel.app/api/anchors",
+    "https://corridorlens-git-preview-branch.vercel.app/api/anchors",
   );
 
   // Preview environment with explicit https VERCEL_URL
@@ -66,83 +66,83 @@ test("preview configuration resolves from VERCEL_URL and NEXT_PUBLIC_API_URL", (
   );
 
   // Preview environment with NEXT_PUBLIC_APP_URL
-  const previewAppUrlEnv = { NEXT_PUBLIC_APP_URL: "https://preview.stellarcore.org" };
+  const previewAppUrlEnv = { NEXT_PUBLIC_APP_URL: "https://preview.corridorlens.org" };
   assert.equal(
     resolveApiUrl("/api/rates", { env: previewAppUrlEnv }),
-    "https://preview.stellarcore.org/api/rates",
+    "https://preview.corridorlens.org/api/rates",
   );
 });
 
 test("production-like configuration resolves to configured production origin", () => {
-  const prodEnv = { NEXT_PUBLIC_API_URL: "https://stellarcore.org" };
+  const prodEnv = { NEXT_PUBLIC_API_URL: "https://corridorlens.org" };
   assert.equal(
     resolveApiUrl("/api/anchors", { env: prodEnv }),
-    "https://stellarcore.org/api/anchors",
+    "https://corridorlens.org/api/anchors",
   );
   assert.equal(
     resolveApiUrl("/api/corridors/usdc-us-brl-br", { env: prodEnv }),
-    "https://stellarcore.org/api/corridors/usdc-us-brl-br",
+    "https://corridorlens.org/api/corridors/usdc-us-brl-br",
   );
   assert.equal(
     resolveApiUrl("/api/rates/history?corridor=usdc-us-brl-br&days=7", { env: prodEnv }),
-    "https://stellarcore.org/api/rates/history?corridor=usdc-us-brl-br&days=7",
+    "https://corridorlens.org/api/rates/history?corridor=usdc-us-brl-br&days=7",
   );
 });
 
 test("URL resolution does not duplicate path prefixes", () => {
   // 1. Base URL ends with /api and target path begins with /api
   assert.equal(
-    resolveApiUrl("/api/rates", { baseUrl: "https://stellarcore.org/api" }),
-    "https://stellarcore.org/api/rates",
+    resolveApiUrl("/api/rates", { baseUrl: "https://corridorlens.org/api" }),
+    "https://corridorlens.org/api/rates",
     "must not produce /api/api/rates",
   );
 
   // 2. Base URL ends with /api/ (trailing slash) and target is /api/anchors
   assert.equal(
-    resolveApiUrl("/api/anchors", { baseUrl: "https://stellarcore.org/api/" }),
-    "https://stellarcore.org/api/anchors",
+    resolveApiUrl("/api/anchors", { baseUrl: "https://corridorlens.org/api/" }),
+    "https://corridorlens.org/api/anchors",
   );
 
   // 3. Base URL ends with /api and target has no leading slash: api/corridors
   assert.equal(
-    resolveApiUrl("api/corridors", { baseUrl: "https://stellarcore.org/api" }),
-    "https://stellarcore.org/api/corridors",
+    resolveApiUrl("api/corridors", { baseUrl: "https://corridorlens.org/api" }),
+    "https://corridorlens.org/api/corridors",
   );
 
   // 4. Base URL has nested prefix e.g. /v1/api and target is /api/rates
   assert.equal(
-    resolveApiUrl("/api/rates", { baseUrl: "https://stellarcore.org/v1/api" }),
-    "https://stellarcore.org/v1/api/rates",
+    resolveApiUrl("/api/rates", { baseUrl: "https://corridorlens.org/v1/api" }),
+    "https://corridorlens.org/v1/api/rates",
   );
 
   // 5. Multiple redundant slashes normalized
   assert.equal(
-    resolveApiUrl("///api//rates///", { baseUrl: "https://stellarcore.org///" }),
-    "https://stellarcore.org/api/rates/",
+    resolveApiUrl("///api//rates///", { baseUrl: "https://corridorlens.org///" }),
+    "https://corridorlens.org/api/rates/",
   );
 
   // 6. Base URL with non-overlapping pathname
   assert.equal(
-    resolveApiUrl("/api/rates", { baseUrl: "https://stellarcore.org/backend" }),
-    "https://stellarcore.org/backend/api/rates",
+    resolveApiUrl("/api/rates", { baseUrl: "https://corridorlens.org/backend" }),
+    "https://corridorlens.org/backend/api/rates",
   );
 });
 
 test("preserves query parameters and URL hashes exactly", () => {
   const url = resolveApiUrl(
     "/api/rates/history?corridor=usdc-us-brl-br&days=30#evidence-panel",
-    { baseUrl: "https://stellarcore.org" },
+    { baseUrl: "https://corridorlens.org" },
   );
   assert.equal(
     url,
-    "https://stellarcore.org/api/rates/history?corridor=usdc-us-brl-br&days=30#evidence-panel",
+    "https://corridorlens.org/api/rates/history?corridor=usdc-us-brl-br&days=30#evidence-panel",
   );
 });
 
 test("invalid configuration fails clearly and safely without leaking secrets", () => {
   // Empty or non-string paths
   assert.throws(
-    () => resolveApiUrl("", { baseUrl: "https://stellarcore.org" }),
+    () => resolveApiUrl("", { baseUrl: "https://corridorlens.org" }),
     (err: Error) => {
       assert.equal(err instanceof InvalidApiUrlConfigurationError, true);
       assert.match(err.message, /non-empty string/i);
@@ -152,13 +152,13 @@ test("invalid configuration fails clearly and safely without leaking secrets", (
 
   assert.throws(
     // @ts-expect-error test non-string runtime input
-    () => resolveApiUrl(null, { baseUrl: "https://stellarcore.org" }),
+    () => resolveApiUrl(null, { baseUrl: "https://corridorlens.org" }),
     InvalidApiUrlConfigurationError,
   );
 
   // Unsupported protocols
   assert.throws(
-    () => resolveApiUrl("/api/rates", { baseUrl: "ftp://files.stellarcore.org" }),
+    () => resolveApiUrl("/api/rates", { baseUrl: "ftp://files.corridorlens.org" }),
     (err: Error) => {
       assert.equal(err instanceof InvalidApiUrlConfigurationError, true);
       assert.match(err.message, /Unsupported protocol 'ftp:'/i);
@@ -173,7 +173,7 @@ test("invalid configuration fails clearly and safely without leaking secrets", (
 
   // Protocol-relative without protocol
   assert.throws(
-    () => resolveApiUrl("/api/rates", { baseUrl: "//stellarcore.org" }),
+    () => resolveApiUrl("/api/rates", { baseUrl: "//corridorlens.org" }),
     (err: Error) => {
       assert.equal(err instanceof InvalidApiUrlConfigurationError, true);
       assert.match(err.message, /explicit http or https protocol/i);
@@ -183,7 +183,7 @@ test("invalid configuration fails clearly and safely without leaking secrets", (
 
   // Credentials in base URL (security check: fail clearly without reflecting secret)
   assert.throws(
-    () => resolveApiUrl("/api/rates", { baseUrl: "https://admin:super_secret_password@stellarcore.org" }),
+    () => resolveApiUrl("/api/rates", { baseUrl: "https://admin:super_secret_password@corridorlens.org" }),
     (err: Error) => {
       assert.equal(err instanceof InvalidApiUrlConfigurationError, true);
       assert.match(err.message, /must not contain user credentials/i);
@@ -209,7 +209,7 @@ test("dashboard API requests use resolved URL and never contact real production 
     recordedCalls.push({ url: urlString, init });
 
     // Ensure test fails loudly if any unmocked call attempts real production egress
-    if (urlString.startsWith("https://stellarcore.org") && !recordedCalls) {
+    if (urlString.startsWith("https://corridorlens.org") && !recordedCalls) {
       throw new Error("Contacted real production endpoint!");
     }
 
@@ -239,24 +239,24 @@ test("dashboard API requests use resolved URL and never contact real production 
     const previewRes = await fetchDashboardApi(
       "/api/corridors",
       undefined,
-      { env: { VERCEL_URL: "stellarcore-preview.vercel.app" } },
+      { env: { VERCEL_URL: "corridorlens-preview.vercel.app" } },
     );
     assert.equal(previewRes.status, 200);
     assert.equal(
       recordedCalls[1]?.url,
-      "https://stellarcore-preview.vercel.app/api/corridors",
+      "https://corridorlens-preview.vercel.app/api/corridors",
     );
 
     // 3. Dashboard request with production configuration (prefix deduplication verified)
     const prodRes = await fetchDashboardApi(
       "/api/anchors",
       { headers: { Accept: "application/json" } },
-      { baseUrl: "https://stellarcore.org/api" },
+      { baseUrl: "https://corridorlens.org/api" },
     );
     assert.equal(prodRes.status, 200);
     assert.equal(
       recordedCalls[2]?.url,
-      "https://stellarcore.org/api/anchors",
+      "https://corridorlens.org/api/anchors",
     );
 
     // Verify all 3 mock calls recorded without real network access

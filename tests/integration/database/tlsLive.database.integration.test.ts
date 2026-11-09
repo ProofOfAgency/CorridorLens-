@@ -11,7 +11,7 @@ import { resolveDatabaseTlsPolicyForEnvironment } from "@/lib/database/tlsPolicy
  * Live TLS-capable PostgreSQL integration (issue #181).
  *
  * Skipped unless RUN_DATABASE_TLS_INTEGRATION=1 and a TLS-enabled PostgreSQL
- * endpoint is supplied. The default StellarCore run never executes this test;
+ * endpoint is supplied. The default CorridorLens run never executes this test;
  * see docs/database-tls-policy.md for the manual procedure.
  *
  * Required environment when enabled:
@@ -35,13 +35,13 @@ test("verified-TLS PostgreSQL configuration connects and executes over the authe
   let caPath: string | null = null;
 
   if (inlineCa) {
-    const caDir = mkdtempSync(join(tmpdir(), `stellarcore-tls-${randomUUID().slice(0, 8)}-`));
+    const caDir = mkdtempSync(join(tmpdir(), `corridorlens-tls-${randomUUID().slice(0, 8)}-`));
     caPath = join(caDir, "ca.pem");
     writeFileSync(caPath, inlineCa, "utf8");
-    process.env.STELLARCORE_DB_CA_PATH = caPath;
+    process.env.CORRIDORLENS_DB_CA_PATH = caPath;
   } else {
-    process.env.STELLARCORE_DB_CA = process.env.DATABASE_TLS_CA ?? "";
-    delete process.env.STELLARCORE_DB_CA;
+    process.env.CORRIDORLENS_DB_CA = process.env.DATABASE_TLS_CA ?? "";
+    delete process.env.CORRIDORLENS_DB_CA;
   }
 
   try {
@@ -49,7 +49,7 @@ test("verified-TLS PostgreSQL configuration connects and executes over the authe
       databaseUrl,
       environmentId: "production",
       environment: {
-        ...(caPath ? { STELLARCORE_DB_CA_PATH: caPath } : {}),
+        ...(caPath ? { CORRIDORLENS_DB_CA_PATH: caPath } : {}),
       },
     });
 
@@ -79,7 +79,7 @@ test("verified-TLS PostgreSQL configuration connects and executes over the authe
     }
   } finally {
     if (caPath) {
-      delete process.env.STELLARCORE_DB_CA_PATH;
+      delete process.env.CORRIDORLENS_DB_CA_PATH;
       rmSync(caPath, { force: true });
     }
   }

@@ -1,6 +1,6 @@
 ---
 name: Propose a new anchor
-about: Suggest an anchor for review in StellarCore's registry
+about: Suggest an anchor for review in CorridorLens's registry
 title: "Add anchor proposal: "
 labels: ""
 assignees: ""

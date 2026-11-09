@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { auditCurrentStellarCoreConfiguration } from "@/lib/config/currentStellarCoreConfiguration";
+import { auditCurrentCorridorLensConfiguration } from "@/lib/config/currentCorridorLensConfiguration";
 import {
-  assertStellarCoreConfiguration,
-  auditStellarCoreConfiguration,
-  StellarCoreConfigurationAuditError,
+  assertCorridorLensConfiguration,
+  auditCorridorLensConfiguration,
+  CorridorLensConfigurationAuditError,
   type ConfigurationAuditIssueCode,
-  type StellarCoreConfigurationInput,
-} from "@/lib/config/stellarCoreConfiguration";
+  type CorridorLensConfigurationInput,
+} from "@/lib/config/corridorLensConfiguration";
 import type { AnchorRegistryEntry } from "@/types/anchor";
 import type {
   AnchorCorridorRegistryEntry,
@@ -47,7 +47,7 @@ const USD_CORRIDOR = Object.freeze({
 }) satisfies CorridorRegistryEntry;
 
 test("current checked-in configuration passes the offline audit", () => {
-  assert.deepEqual(auditCurrentStellarCoreConfiguration(), {
+  assert.deepEqual(auditCurrentCorridorLensConfiguration(), {
     ok: true,
     issues: [],
   });
@@ -260,11 +260,11 @@ test("audit results and assertion errors never reflect unsafe supplied values", 
   assert.equal(JSON.stringify(result).includes(sentinel), false);
   assert.equal(JSON.stringify(result).includes(safeLookingSecret), false);
   assert.throws(
-    () => assertStellarCoreConfiguration(input),
+    () => assertCorridorLensConfiguration(input),
     (error) => {
-      assert.ok(error instanceof StellarCoreConfigurationAuditError);
-      assert.equal(error.code, "INVALID_STELLARCORE_CONFIGURATION");
-      assert.equal(error.message, "StellarCore configuration audit failed");
+      assert.ok(error instanceof CorridorLensConfigurationAuditError);
+      assert.equal(error.code, "INVALID_CORRIDORLENS_CONFIGURATION");
+      assert.equal(error.message, "CorridorLens configuration audit failed");
       assert.equal(JSON.stringify(error).includes(sentinel), false);
       assert.equal(JSON.stringify(error).includes(safeLookingSecret), false);
       return true;
@@ -277,7 +277,7 @@ function configuration(overrides: Readonly<{
   corridors?: readonly CorridorRegistryEntry[];
   mappings?: readonly AnchorCorridorRegistryEntry[];
   sources?: readonly ReviewedLiveRateSource[];
-}> = {}): StellarCoreConfigurationInput {
+}> = {}): CorridorLensConfigurationInput {
   return Object.freeze({
     anchors: overrides.anchors ?? Object.freeze([ANCHOR_A]),
     corridors: overrides.corridors ?? Object.freeze([BRL_CORRIDOR]),
@@ -312,8 +312,8 @@ function source(
   }) as ReviewedLiveRateSource;
 }
 
-function audit(input: StellarCoreConfigurationInput) {
-  return auditStellarCoreConfiguration(input);
+function audit(input: CorridorLensConfigurationInput) {
+  return auditCorridorLensConfiguration(input);
 }
 
 function codes(result: ReturnType<typeof audit>): ConfigurationAuditIssueCode[] {

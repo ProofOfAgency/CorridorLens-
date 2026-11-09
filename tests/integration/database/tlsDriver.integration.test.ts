@@ -10,7 +10,7 @@ import {
 const PROD_URL = "postgres://user:secret@db.example.com:5432/stellar";
 
 /**
- * These tests verify the interaction between StellarCore's TLS policy and the
+ * These tests verify the interaction between CorridorLens's TLS policy and the
  * real `pg` driver config resolution (pg-connection-string + Pool
  * ConnectionParameters) without a live server: the exact sanitized
  * connection string and ssl object that reach the driver are fed through the
@@ -18,7 +18,7 @@ const PROD_URL = "postgres://user:secret@db.example.com:5432/stellar";
  */
 
 test("the sanitized connection string produces no TLS fields in the driver's parsed config", () => {
-  const dirtyUrl = `${PROD_URL}?sslmode=require&ssl=no-verify&connection_limit=5&application_name=stellarcore`;
+  const dirtyUrl = `${PROD_URL}?sslmode=require&ssl=no-verify&connection_limit=5&application_name=corridorlens`;
   const result = resolveDatabaseTlsPolicyForEnvironment({
     databaseUrl: dirtyUrl,
     environmentId: "production",
@@ -39,7 +39,7 @@ test("the sanitized connection string produces no TLS fields in the driver's par
   const parsedClean = parseConnectionString(result.sanitizedConnectionString);
   assert.equal(parsedClean.sslmode, undefined);
   assert.equal(parsedClean.ssl, undefined);
-  assert.equal(parsedClean.application_name, "stellarcore");
+  assert.equal(parsedClean.application_name, "corridorlens");
 });
 
 test("the policy-owned ssl object reaches the driver without URL override", () => {
@@ -47,7 +47,7 @@ test("the policy-owned ssl object reaches the driver without URL override", () =
     databaseUrl: `${PROD_URL}?sslmode=no-verify`,
     environmentId: "production",
     environment: {
-      STELLARCORE_DB_TLS_EMERGENCY_BYPASS: "allow-unverified",
+      CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS: "allow-unverified",
     },
   });
 
@@ -80,7 +80,7 @@ test("verified-TLS policy object passes rejectUnauthorized=true to the driver sh
 });
 
 test("conflicting PGSSLMODE cannot override the policy ssl object inside the driver", () => {
-  const url = `${PROD_URL}?sslmode=require&application_name=stellarcore`;
+  const url = `${PROD_URL}?sslmode=require&application_name=corridorlens`;
   const result = resolveDatabaseTlsPolicyForEnvironment({
     databaseUrl: url,
     environmentId: "production",

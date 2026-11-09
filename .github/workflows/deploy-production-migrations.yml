@@ -80,4 +80,4 @@ jobs:
         run: npm run stamp:environment
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          STELLARCORE_STAMP_ENVIRONMENT: production
+          CORRIDORLENS_STAMP_ENVIRONMENT: production

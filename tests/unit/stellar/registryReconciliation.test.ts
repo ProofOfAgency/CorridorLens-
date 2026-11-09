@@ -597,7 +597,7 @@ test("the human-readable report renders drift, evidence, and plan sections", () 
 
   const text = formatRegistryReconciliationReport(report);
 
-  assert.match(text, /StellarCore registry-to-database reconciliation/);
+  assert.match(text, /CorridorLens registry-to-database reconciliation/);
   assert.match(text, /Drift detected: \d+ issue\(s\)\./);
   assert.match(text, /\[unexpected-anchor\] "ghost-anchor"/);
   assert.match(text, /\[orphaned-rate-snapshot\] "ghost-anchor" holds 4/);

@@ -50,7 +50,7 @@ jobs:
                 issue_number: pull.number,
                 per_page: 100,
               });
-              if (comments.some((comment) => comment.body?.includes('<!-- stellarcore-stale-pr-reminder -->'))) continue;
+              if (comments.some((comment) => comment.body?.includes('<!-- corridorlens-stale-pr-reminder -->'))) continue;
 
               const reviewers = (pull.requested_reviewers ?? [])
                 .map((reviewer) => reviewer.login)
@@ -59,7 +59,7 @@ jobs:
               const mentions = [`@${pull.user.login}`, ...reviewers, `@${context.repo.owner}`]
                 .filter((value, index, values) => values.indexOf(value) === index)
                 .join(' ');
-              const body = `<!-- stellarcore-stale-pr-reminder -->\n${mentions}\nThis pull request has had no activity for at least ${staleDays} days. Please review, update, or close it when convenient.`;
+              const body = `<!-- corridorlens-stale-pr-reminder -->\n${mentions}\nThis pull request has had no activity for at least ${staleDays} days. Please review, update, or close it when convenient.`;
 
               if (dryRun) {
                 core.info(`Would comment on #${pull.number}: ${body}`);

@@ -170,7 +170,7 @@ export function RatePanelView({ result }: { result: RatesApiResult }) {
           </dt>
 
           <dd className="mt-1 text-[var(--white)]">
-            Reviewed candidates known to StellarCore
+            Reviewed candidates known to CorridorLens
           </dd>
 
           <dd className="mt-1 text-[var(--muted)]">

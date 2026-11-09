@@ -41,7 +41,7 @@ type SnapshotEnvelope = Readonly<{
 
 export const FILE_STALE_EVIDENCE_STORE = createFileStaleEvidenceStore(
   process.env.STALE_EVIDENCE_DIRECTORY
-    ?? join(tmpdir(), "stellarcore-stale-evidence"),
+    ?? join(tmpdir(), "corridorlens-stale-evidence"),
 );
 
 export function createFileStaleEvidenceStore(directory: string): StaleEvidenceStore {

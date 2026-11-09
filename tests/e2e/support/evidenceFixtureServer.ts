@@ -91,7 +91,7 @@ function dashboardPage(state: EvidenceFixtureState): string {
       sections,
       "</main>",
     ].join(""),
-    "Dashboard — StellarCore",
+    "Dashboard — CorridorLens",
   );
 }
 
@@ -107,7 +107,7 @@ function navigationPage(): string {
       "</ul>",
       "</main>",
     ].join(""),
-    "Evidence fixture navigation — StellarCore",
+    "Evidence fixture navigation — CorridorLens",
   );
 }
 
@@ -143,7 +143,7 @@ function handle(request: IncomingMessage, response: ServerResponse): void {
       send(
         response,
         404,
-        page("<main><h1>Unknown evidence fixture</h1></main>", "Unknown evidence fixture — StellarCore"),
+        page("<main><h1>Unknown evidence fixture</h1></main>", "Unknown evidence fixture — CorridorLens"),
       );
       return;
     }
@@ -151,7 +151,7 @@ function handle(request: IncomingMessage, response: ServerResponse): void {
     return;
   }
 
-  send(response, 404, page("<main><h1>Not found</h1></main>", "Not found — StellarCore"));
+  send(response, 404, page("<main><h1>Not found</h1></main>", "Not found — CorridorLens"));
 }
 
 const server = createServer(handle);

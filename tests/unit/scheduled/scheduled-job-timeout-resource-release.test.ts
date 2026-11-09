@@ -622,7 +622,7 @@ test("a handler failure raised during cancellation still releases every resource
 test("a timeout in the rate phase ends the cycle with the partial truth and no success claim", async () => {
   const database = fakeScheduledDatabase();
   database.setSourceAvailable(false);
-  const request = new Request("https://stellarcore.test/api/internal/cron/refresh", {
+  const request = new Request("https://corridorlens.test/api/internal/cron/refresh", {
     headers: { authorization: "Bearer secret" },
   });
 
@@ -667,7 +667,7 @@ test("a timeout in the rate phase ends the cycle with the partial truth and no s
 test("a timeout in the reputation phase reaches the HTTP boundary as a safe 500", async () => {
   const database = fakeScheduledDatabase();
   database.setSourceAvailable(false);
-  const request = new Request("https://stellarcore.test/api/internal/cron/refresh", {
+  const request = new Request("https://corridorlens.test/api/internal/cron/refresh", {
     headers: { authorization: "Bearer secret" },
   });
 

@@ -195,7 +195,7 @@ function validateArithmeticConsistency(input: Readonly<{
     }
   }
 
-  // SEP-38 price is always sell_asset per one unit of buy_asset. StellarCore's
+  // SEP-38 price is always sell_asset per one unit of buy_asset. CorridorLens's
   // reviewed live sources currently accept fees denominated in buy_asset, so
   // the applicable protocol formulas are:
   //

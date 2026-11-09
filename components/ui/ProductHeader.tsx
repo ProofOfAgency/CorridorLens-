@@ -15,17 +15,17 @@ export function ProductHeader({
       <a className="skip-link" href="#main-content">
         Skip to content
       </a>
-      <Link className="brand" href="/" aria-label="StellarCore home">
+      <Link className="brand" href="/" aria-label="CorridorLens home">
         <Image
           className="brand-logo"
-          src="/StellarCore-logo.png"
+          src="/CorridorLens-logo.png"
           alt=""
           width={135}
           height={128}
           priority
           aria-hidden="true"
         />
-        StellarCore
+        CorridorLens
       </Link>
       <nav className="product-nav" aria-label="Primary navigation">
         {current === "home" ? (

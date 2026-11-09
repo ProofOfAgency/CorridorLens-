@@ -185,7 +185,7 @@ function queryNpmVersion(env?: Record<string, string>): string {
  * sandbox.
  */
 function stageReviewedInputs(options: Options): { stageDir: string; commit: string | null } {
-  const stageDir = mkdtempSync(join(tmpdir(), "stellarcore-install-verify-stage-"));
+  const stageDir = mkdtempSync(join(tmpdir(), "corridorlens-install-verify-stage-"));
   if (options.useWorktree) {
     for (const path of ARCHIVE_PATHS) {
       if (!existsSync(path)) fail(`--worktree requires ${path} in the working tree`);
@@ -354,7 +354,7 @@ function runIsolatedInstall(
   options: Options,
 ): InstallRunResult {
   const id = `run-${runIndex + 1}`;
-  const sandboxPath = mkdtempSync(join(tmpdir(), `stellarcore-install-verify-${id}-`));
+  const sandboxPath = mkdtempSync(join(tmpdir(), `corridorlens-install-verify-${id}-`));
   const env = scrubEnvironment(options.sharedCache);
   for (const [key, value] of Object.entries(env)) {
     if (typeof value === "string") {

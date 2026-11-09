@@ -23,7 +23,7 @@ test("production runtime with a plain URL resolves verified TLS and a sanitized 
 });
 
 test("production runtime upgrades sslmode=require and strips it before the driver connection", () => {
-  const configuredUrl = `${PROD_URL}?sslmode=require&application_name=stellarcore`;
+  const configuredUrl = `${PROD_URL}?sslmode=require&application_name=corridorlens`;
   const result = resolveDatabaseTlsPolicyForEnvironment({
     databaseUrl: configuredUrl,
     environmentId: "production",
@@ -33,11 +33,11 @@ test("production runtime upgrades sslmode=require and strips it before the drive
   assert.equal(result.resolution.accepted, true);
   assert.ok(result.resolution.accepted && result.resolution.mode === "VERIFY_FULL");
   assert.ok(result.resolution.accepted && result.resolution.sslConfig.rejectUnauthorized === true);
-  assert.equal(result.sanitizedConnectionString, `${PROD_URL}?application_name=stellarcore`);
+  assert.equal(result.sanitizedConnectionString, `${PROD_URL}?application_name=corridorlens`);
 });
 
 test("production runtime with a bypass URL rejects with the safe diagnostic and keeps TLS parameters out of the connection string", () => {
-  const bypassedUrl = `${PROD_URL}?ssl=no-verify&application_name=stellarcore`;
+  const bypassedUrl = `${PROD_URL}?ssl=no-verify&application_name=corridorlens`;
   const result = resolveDatabaseTlsPolicyForEnvironment({
     databaseUrl: bypassedUrl,
     environmentId: "production",
@@ -51,7 +51,7 @@ test("production runtime with a bypass URL rejects with the safe diagnostic and 
   assert.equal(JSON.stringify(rejection).includes("secret"), false);
   // The sanitized connection string removes the smuggling vector regardless.
   assert.equal(result.sanitizedConnectionString.includes("ssl=no-verify"), false);
-  assert.equal(result.sanitizedConnectionString.includes("application_name=stellarcore"), true);
+  assert.equal(result.sanitizedConnectionString.includes("application_name=corridorlens"), true);
 });
 
 test("the emergency bypass gate activates only with the exact value and logs no credentials", () => {
@@ -60,7 +60,7 @@ test("the emergency bypass gate activates only with the exact value and logs no 
   const notGated = resolveDatabaseTlsPolicyForEnvironment({
     databaseUrl: bypassedUrl,
     environmentId: "production",
-    environment: { STELLARCORE_DB_TLS_EMERGENCY_BYPASS: "true" },
+    environment: { CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS: "true" },
   });
   assert.equal(notGated.emergencyBypassActive, false);
   assert.equal(notGated.resolution.accepted, false);
@@ -69,7 +69,7 @@ test("the emergency bypass gate activates only with the exact value and logs no 
     databaseUrl: bypassedUrl,
     environmentId: "production",
     environment: {
-      STELLARCORE_DB_TLS_EMERGENCY_BYPASS: "allow-unverified",
+      CORRIDORLENS_DB_TLS_EMERGENCY_BYPASS: "allow-unverified",
     },
   });
   assert.equal(gated.emergencyBypassActive, true);
@@ -89,7 +89,7 @@ test("development runtime keeps plaintext usable without policy interference", (
 });
 
 test("a configured CA file is loaded into the ssl config; its content never appears in diagnostics", () => {
-  const caDir = mkdtempSync(join(tmpdir(), "stellarcore-ca-"));
+  const caDir = mkdtempSync(join(tmpdir(), "corridorlens-ca-"));
   const caPath = join(caDir, "provider-ca.pem");
   writeFileSync(caPath, "-----BEGIN CERTIFICATE-----\nPROVIDER-TEST-CA\n-----END CERTIFICATE-----\n");
 
@@ -98,7 +98,7 @@ test("a configured CA file is loaded into the ssl config; its content never appe
       databaseUrl: PROD_URL,
       environmentId: "production",
       environment: {
-        STELLARCORE_DB_CA_PATH: caPath,
+        CORRIDORLENS_DB_CA_PATH: caPath,
       },
     });
 
@@ -122,7 +122,7 @@ test("a configured missing CA file path fails closed in production", () => {
     databaseUrl: PROD_URL,
     environmentId: "production",
     environment: {
-      STELLARCORE_DB_CA_PATH: "/nonexistent/path/ca.pem",
+      CORRIDORLENS_DB_CA_PATH: "/nonexistent/path/ca.pem",
     },
   });
 

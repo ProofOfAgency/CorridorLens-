@@ -3,7 +3,7 @@
 ## Purpose
 
 PostgreSQL session-scoped advisory locks provide a stable, database-backed
-coordination primitive for StellarCore workflows. This document is the
+coordination primitive for CorridorLens workflows. This document is the
 authoritative registry of every declared lock name, its domain, its versioning
 rule, and its derived key. Issue #111 owns wiring this primitive into the
 scheduled-refresh run ledger; this issue defines the lock identity contract that

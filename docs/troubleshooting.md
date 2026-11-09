@@ -1,6 +1,6 @@
 # Troubleshooting local development
 
-Known friction points when setting StellarCore up locally, each with a
+Known friction points when setting CorridorLens up locally, each with a
 working workaround. Every entry below was reproduced on a fresh clone before it
 was written down; nothing here is documented from assumption.
 
@@ -28,7 +28,7 @@ fix; see [CONTRIBUTING.md](../CONTRIBUTING.md).
 ```text
 > prisma generate
 
-Failed to load config file "…/StellarCore" as a TypeScript/JavaScript module.
+Failed to load config file "…/CorridorLens" as a TypeScript/JavaScript module.
 Error: PrismaConfigEnvError: Cannot resolve environment variable: DATABASE_URL.
 npm error code 1
 npm error command sh -c prisma generate
@@ -52,14 +52,14 @@ Error: Cannot find module '@/app/generated/prisma/client'
 connect, so a placeholder is enough:
 
 ```bash
-DATABASE_URL="postgresql://user:pass@localhost:5432/stellarcore" npm install
+DATABASE_URL="postgresql://user:pass@localhost:5432/corridorlens" npm install
 ```
 
 If you already ran a bare `npm install`, you do not need to reinstall. Generate
 the client and continue:
 
 ```bash
-DATABASE_URL="postgresql://user:pass@localhost:5432/stellarcore" npx prisma generate
+DATABASE_URL="postgresql://user:pass@localhost:5432/corridorlens" npx prisma generate
 npm test   # runs offline; no live database needed
 ```
 
@@ -126,8 +126,8 @@ A working setup, in order:
 
 ```bash
 # 1. Start a named server in the background and note the printed URL
-DATABASE_URL="postgresql://user:pass@localhost:5432/stellarcore" \
-  npx prisma dev --name stellarcore --detach
+DATABASE_URL="postgresql://user:pass@localhost:5432/corridorlens" \
+  npx prisma dev --name corridorlens --detach
 # -> postgres://postgres:postgres@localhost:51214/template1?sslmode=disable
 
 # 2. Put that URL in .env as DATABASE_URL
@@ -150,7 +150,7 @@ dev`.
 **Symptom.** Even `npx prisma dev --help` fails when `DATABASE_URL` is unset:
 
 ```text
-Failed to load config file "…/StellarCore" as a TypeScript/JavaScript module.
+Failed to load config file "…/CorridorLens" as a TypeScript/JavaScript module.
 Error: PrismaConfigEnvError: Cannot resolve environment variable: DATABASE_URL.
 ```
 
@@ -198,9 +198,9 @@ If you already ran `migrate dev` and the server is dirty, throw the server away
 and start again (this deletes its data, which is fine for local development):
 
 ```bash
-npx prisma dev rm stellarcore --force
-DATABASE_URL="postgresql://user:pass@localhost:5432/stellarcore" \
-  npx prisma dev --name stellarcore --detach
+npx prisma dev rm corridorlens --force
+DATABASE_URL="postgresql://user:pass@localhost:5432/corridorlens" \
+  npx prisma dev --name corridorlens --detach
 npx prisma migrate deploy
 ```
 
@@ -216,7 +216,7 @@ the "Starting the following prisma dev servers" banner, exits with code 1, and
 leaves the server `not_running`:
 
 ```bash
-npx prisma dev start stellarcore   # exit 1, no error, still not_running
+npx prisma dev start corridorlens   # exit 1, no error, still not_running
 ```
 
 **Why.** Not determined. The failure is silent, and I did not find the cause.
@@ -228,9 +228,9 @@ retry about 8 seconds later succeeded, printed the connection URLs, and
 `prisma dev ls` showed the server as `running`:
 
 ```bash
-npx prisma dev start stellarcore
+npx prisma dev start corridorlens
 ```
 
 If it still will not start, remove and recreate the server as in the previous
-entry (`npx prisma dev rm stellarcore --force`, then start it again and re-run
+entry (`npx prisma dev rm corridorlens --force`, then start it again and re-run
 `npx prisma migrate deploy`).

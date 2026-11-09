@@ -1,5 +1,5 @@
 /**
- * Public-safe environment metadata for StellarCore evidence consumers.
+ * Public-safe environment metadata for CorridorLens evidence consumers.
  *
  * Public evidence can be served by a production, preview, or test runtime.
  * Consumers need to know which environment produced what they are reading, but
@@ -30,7 +30,7 @@ import {
   type RuntimeConfig,
 } from "@/lib/config/runtimeConfig";
 
-export const ENVIRONMENT_METADATA_VERSION = "stellarcore-environment-metadata-v1";
+export const ENVIRONMENT_METADATA_VERSION = "corridorlens-environment-metadata-v1";
 
 export const ENVIRONMENT_METADATA_SOURCES = [
   "explicit-env",

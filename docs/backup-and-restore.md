@@ -1,6 +1,6 @@
 # Database backup and restore runbook
 
-The tested procedure for backing up and restoring the StellarCore PostgreSQL
+The tested procedure for backing up and restoring the CorridorLens PostgreSQL
 database. Every step below was actually performed against a non-production
 database on 2026-09-25 — the transcript is at the end — per #64. It uses only
 standard PostgreSQL tooling (`pg_dump` / `pg_restore`), so it works the same
@@ -37,10 +37,10 @@ into two classes, which matters for recovery decisions:
 export SOURCE_URL='postgresql://USER:PASSWORD@HOST:5432/DATABASE'
 
 # 2. Custom-format dump (compressed, selectively restorable):
-pg_dump --format=custom --file="stellarcore-$(date +%Y%m%d).dump" "$SOURCE_URL"
+pg_dump --format=custom --file="corridorlens-$(date +%Y%m%d).dump" "$SOURCE_URL"
 
 # 3. Confirm it is non-trivial in size and record it with its date:
-ls -lh stellarcore-*.dump
+ls -lh corridorlens-*.dump
 ```
 
 Notes from the verified run: the dump is **online** (no downtime; it reads a
@@ -61,12 +61,12 @@ live production database as a first move.
 
 ```bash
 # 1. Create an empty target database (any reachable Postgres):
-psql "$ADMIN_URL" -c 'CREATE DATABASE stellarcore_restore'
+psql "$ADMIN_URL" -c 'CREATE DATABASE corridorlens_restore'
 
 # 2. Restore. --no-owner/--no-privileges because the target role (managed
 #    Postgres, local container) rarely matches the roles in the dump:
-pg_restore --dbname="postgresql://USER:PASSWORD@HOST:5432/stellarcore_restore" \
-  --no-owner --no-privileges stellarcore-YYYYMMDD.dump
+pg_restore --dbname="postgresql://USER:PASSWORD@HOST:5432/corridorlens_restore" \
+  --no-owner --no-privileges corridorlens-YYYYMMDD.dump
 ```
 
 A ~2.5M-row restore took ~1 m 50 s in the verified run. `pg_restore` exits
@@ -76,7 +76,7 @@ verification below every time.
 ### Verification checklist (all performed in the test)
 
 ```bash
-export RESTORED_URL='postgresql://USER:PASSWORD@HOST:5432/stellarcore_restore'
+export RESTORED_URL='postgresql://USER:PASSWORD@HOST:5432/corridorlens_restore'
 
 # a. Row counts match the source for every table:
 psql "$RESTORED_URL" -c "select 'anchors', count(*) from anchors
@@ -123,7 +123,7 @@ out-of-scope rule.
 | Step | Result |
 | --- | --- |
 | `pg_dump --format=custom` of the source | 85.8 MB in 30.2 s, exit 0 |
-| `pg_restore --no-owner --no-privileges` into fresh `stellarcore_restore` | 1 m 50 s, exit 0 |
+| `pg_restore --no-owner --no-privileges` into fresh `corridorlens_restore` | 1 m 50 s, exit 0 |
 | Row counts source vs restored | identical: anchors 24, corridors 4, anchor_corridors 96, rate_snapshots 2,488,416, `_prisma_migrations` 2 |
 | `npx prisma migrate status` against the restored DB | "Database schema is up to date!" |
 | Latest-rate-per-anchor production query on restored DB | returns 24 rows (one per anchor), as on the source |

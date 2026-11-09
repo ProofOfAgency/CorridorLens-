@@ -12,7 +12,7 @@ import { ProductHeader } from "@/components/ui/ProductHeader";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Dashboard — StellarCore",
+  title: "Dashboard — CorridorLens",
   description: "Read-only view of persisted Stellar anchors, corridors, rate evidence, and reputation.",
 };
 

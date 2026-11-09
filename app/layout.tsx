@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "StellarCore — Anchor Intelligence",
+  title: "CorridorLens — Anchor Intelligence",
   description: "Read-only Stellar anchor, corridor, rate-evidence, and reputation intelligence.",
 };
 

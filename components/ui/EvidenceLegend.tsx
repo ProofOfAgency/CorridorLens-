@@ -5,7 +5,7 @@ const EVIDENCE_STAGES = Object.freeze([
   }),
   Object.freeze({
     title: "Stored observations",
-    description: "Evidence captured and persisted by StellarCore.",
+    description: "Evidence captured and persisted by CorridorLens.",
   }),
   Object.freeze({
     title: "Fresh independent evidence",

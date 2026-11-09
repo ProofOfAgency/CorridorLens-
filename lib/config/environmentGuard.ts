@@ -1,7 +1,7 @@
 /**
  * Environment identity guardrails (#143).
  *
- * Every StellarCore runtime declares which environment it runs in, and every
+ * Every CorridorLens runtime declares which environment it runs in, and every
  * database it connects to carries a durable stamp naming the environment it
  * serves. This module verifies the two match before any evidence access and
  * fails closed when they do not. A preview or test runtime pointed at a
@@ -48,13 +48,13 @@ export type EnvironmentGuardError =
 /**
  * Resolves the declared runtime environment. Reads only explicit identity
  * variables; there is deliberately no hostname- or URL-derived inference.
- * Precedence: STELLARCORE_ENVIRONMENT, then VERCEL_ENV (Vercel's own
+ * Precedence: CORRIDORLENS_ENVIRONMENT, then VERCEL_ENV (Vercel's own
  * deployment metadata), then (in vitest/node-test runs only) "test".
  */
 export function resolveRuntimeEnvironment(
   env: Readonly<Record<string, string | undefined>> = process.env,
 ): EnvironmentGuardError {
-  const explicit = env.STELLARCORE_ENVIRONMENT?.trim();
+  const explicit = env.CORRIDORLENS_ENVIRONMENT?.trim();
   if (explicit) return parseEnvironmentId(explicit, "RUNTIME_ENVIRONMENT_INVALID");
 
   const vercel = env.VERCEL_ENV?.trim();

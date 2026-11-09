@@ -16,7 +16,7 @@ import {
   type ExportSelection,
 } from "@/lib/export/types";
 
-const STELLARCORE_VERSION = "0.1.0";
+const CORRIDORLENS_VERSION = "0.1.0";
 const PAGE_SIZE = 250;
 
 class InvalidExportSelectionError extends Error {
@@ -85,16 +85,16 @@ export async function exportEvidence(
     const provenance = Object.freeze({
       exportedAt: now().toISOString(),
       exportedBy: normalizedExporter,
-      stellarCoreVersion: STELLARCORE_VERSION,
+      corridorLensVersion: CORRIDORLENS_VERSION,
       schemaVersion: EVIDENCE_EXPORT_VERSION,
       selection: normalizedSelection,
-      ...(process.env.STELLARCORE_DEPLOYMENT_REVISION?.trim()
-        ? { deploymentRevision: process.env.STELLARCORE_DEPLOYMENT_REVISION.trim() }
+      ...(process.env.CORRIDORLENS_DEPLOYMENT_REVISION?.trim()
+        ? { deploymentRevision: process.env.CORRIDORLENS_DEPLOYMENT_REVISION.trim() }
         : {}),
-      ...(process.env.STELLARCORE_CONFIG_FINGERPRINT?.trim()
+      ...(process.env.CORRIDORLENS_CONFIG_FINGERPRINT?.trim()
         ? {
             configurationFingerprint:
-              process.env.STELLARCORE_CONFIG_FINGERPRINT.trim().toLowerCase(),
+              process.env.CORRIDORLENS_CONFIG_FINGERPRINT.trim().toLowerCase(),
           }
         : {}),
     });

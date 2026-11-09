@@ -45,7 +45,7 @@ const LOCK_KEY = LOCK_REGISTRY.find(
 const EVALUATED_AT = new Date("2026-09-30T00:00:00.000Z");
 const CRON_SECRET = "local-test-cron-secret";
 /** Credential-bearing text that must never cross a public or logged boundary. */
-const SENSITIVE = "postgresql://stellarcore:hunter2@db.internal:5432/stellarcore";
+const SENSITIVE = "postgresql://corridorlens:hunter2@db.internal:5432/corridorlens";
 
 const RATE_SUMMARY: SafeLiveRateRunSummary = Object.freeze({
   totalCandidates: 1,
@@ -161,7 +161,7 @@ async function runCycleUnderLock(
 }
 
 function cronRequest(): Request {
-  return new Request("https://stellarcore.test/api/internal/cron/refresh", {
+  return new Request("https://corridorlens.test/api/internal/cron/refresh", {
     headers: { authorization: `Bearer ${CRON_SECRET}` },
   });
 }

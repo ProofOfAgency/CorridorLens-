@@ -125,12 +125,12 @@ test("refuses production target database URLs even if environment is marked test
   const productionUrls = [
     "postgresql://user:pass@prod.db.internal:5432/testdb",
     "postgresql://user:pass@production-database.corp:5432/testdb",
-    "postgresql://user:pass@db.live.stellarcore.org:5432/testdb",
+    "postgresql://user:pass@db.live.corridorlens.org:5432/testdb",
     "postgresql://user:pass@primary-cluster.internal:5432/testdb",
     "postgresql://user:pass@app.supabase.co:5432/testdb",
     "postgresql://user:pass@ep-cool-db.neon.tech:5432/testdb",
-    "postgresql://user:pass@stellarcore.c123456789.us-east-1.rds.amazonaws.com:5432/testdb",
-    "postgresql://user:pass@localhost:5432/stellarcore_production",
+    "postgresql://user:pass@corridorlens.c123456789.us-east-1.rds.amazonaws.com:5432/testdb",
+    "postgresql://user:pass@localhost:5432/corridorlens_production",
     "postgresql://user:pass@localhost:5432/production",
     "postgresql://user:pass@127.0.0.1:5432/prod",
   ];
@@ -180,7 +180,7 @@ test("refuses non-loopback hosts without explicit authorization", () => {
 
 test("accepts approved isolated loopback database URLs", () => {
   const approvedUrls = [
-    "postgresql://postgres:pass@localhost:5432/stellarcore_restore",
+    "postgresql://postgres:pass@localhost:5432/corridorlens_restore",
     "postgresql://postgres:pass@127.0.0.1:5432/restore_drill",
     "postgresql://postgres:pass@[::1]:5432/isolated_test_db",
   ];
@@ -225,7 +225,7 @@ test("refuses target database carrying durable production stamp", () => {
 test("failure output NEVER leaks credentials, passwords, or full connection URLs", () => {
   const secretPassword = "super_secret_high_entropy_password_987654";
   const secretToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.secretpayload.signature";
-  const rawUrlWithSecrets = `postgresql://db_admin_user:${secretPassword}@prod.database.internal:5432/stellarcore_prod?token=${secretToken}`;
+  const rawUrlWithSecrets = `postgresql://db_admin_user:${secretPassword}@prod.database.internal:5432/corridorlens_prod?token=${secretToken}`;
 
   try {
     assertRestoreDrillTargetAllowed({
@@ -255,7 +255,7 @@ test("failure output NEVER leaks credentials, passwords, or full connection URLs
     const sanitized = sanitizeDatabaseUrl(rawUrlWithSecrets);
     assert.equal(sanitized.includes(secretPassword), false);
     assert.equal(sanitized.includes(secretToken), false);
-    assert.match(sanitized, /^postgresql:\/\/\*\*\*@prod\.database\.internal:5432\/stellarcore_prod$/);
+    assert.match(sanitized, /^postgresql:\/\/\*\*\*@prod\.database\.internal:5432\/corridorlens_prod$/);
 
     // Test redactSensitiveDetails helper
     const textWithLeak = `Connection failed to ${rawUrlWithSecrets} with password=${secretPassword}`;
@@ -322,7 +322,7 @@ test("production target is rejected BEFORE any restore commands execute", async 
 
 test("resolves target configuration from environment variables correctly", () => {
   const env: Record<string, string> = {
-    STELLARCORE_RESTORE_TARGET_ENVIRONMENT: "ci",
+    CORRIDORLENS_RESTORE_TARGET_ENVIRONMENT: "ci",
     RESTORE_TARGET_DATABASE_URL: "postgresql://postgres:pass@localhost:5432/restore_ci",
   };
 

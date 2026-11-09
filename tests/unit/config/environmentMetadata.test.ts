@@ -33,11 +33,11 @@ const PRODUCTION_PASSWORD = "production-password-must-not-leak";
 const PREVIEW_PASSWORD = "preview-password-must-not-leak";
 const PRODUCTION_CRON_SECRET = "production-cron-secret-must-not-leak";
 
-const PRODUCTION_URL = `postgresql://evidence:${PRODUCTION_PASSWORD}@db.example/stellarcore`;
-const PREVIEW_URL = `postgresql://evidence:${PREVIEW_PASSWORD}@preview.example/stellarcore`;
+const PRODUCTION_URL = `postgresql://evidence:${PRODUCTION_PASSWORD}@db.example/corridorlens`;
+const PREVIEW_URL = `postgresql://evidence:${PREVIEW_PASSWORD}@preview.example/corridorlens`;
 
 const PRODUCTION_ENV = Object.freeze({
-  STELLARCORE_ENVIRONMENT: "production",
+  CORRIDORLENS_ENVIRONMENT: "production",
   DATABASE_URL: PRODUCTION_URL,
   CRON_SECRET: PRODUCTION_CRON_SECRET,
 });
@@ -79,12 +79,12 @@ test("test, ci, and development configurations are isolated and non-production",
   }>> = [
     { env: { NODE_ENV: "test" }, environment: "test", source: "test-default" },
     {
-      env: { STELLARCORE_ENVIRONMENT: "ci", DATABASE_URL: PREVIEW_URL },
+      env: { CORRIDORLENS_ENVIRONMENT: "ci", DATABASE_URL: PREVIEW_URL },
       environment: "ci",
       source: "explicit-env",
     },
     {
-      env: { STELLARCORE_ENVIRONMENT: "development", DATABASE_URL: PREVIEW_URL },
+      env: { CORRIDORLENS_ENVIRONMENT: "development", DATABASE_URL: PREVIEW_URL },
       environment: "development",
       source: "explicit-env",
     },
@@ -106,7 +106,7 @@ test("test, ci, and development configurations are isolated and non-production",
 
 test("identity follows trusted configuration precedence, not ambient values", () => {
   const precedence = resolveEnvironmentMetadata({
-    STELLARCORE_ENVIRONMENT: "preview",
+    CORRIDORLENS_ENVIRONMENT: "preview",
     VERCEL_ENV: "production",
     NODE_ENV: "production",
     DATABASE_URL: PREVIEW_URL,
@@ -127,11 +127,11 @@ test("identity follows trusted configuration precedence, not ambient values", ()
 test("missing or invalid configuration fails closed without throwing", () => {
   const unavailableInputs: ReadonlyArray<Readonly<Record<string, string | undefined>>> = [
     {},
-    { STELLARCORE_ENVIRONMENT: "staging", DATABASE_URL: PRODUCTION_URL },
-    { STELLARCORE_ENVIRONMENT: "production", DATABASE_URL: PRODUCTION_URL },
-    { STELLARCORE_ENVIRONMENT: "production" },
+    { CORRIDORLENS_ENVIRONMENT: "staging", DATABASE_URL: PRODUCTION_URL },
+    { CORRIDORLENS_ENVIRONMENT: "production", DATABASE_URL: PRODUCTION_URL },
+    { CORRIDORLENS_ENVIRONMENT: "production" },
     { VERCEL_ENV: "preview" },
-    { STELLARCORE_ENVIRONMENT: "   " },
+    { CORRIDORLENS_ENVIRONMENT: "   " },
   ];
 
   for (const env of unavailableInputs) {
@@ -190,9 +190,9 @@ test("no non-production configuration can claim production identity by default",
     { NODE_ENV: "development" },
     { VERCEL_ENV: "preview", DATABASE_URL: PREVIEW_URL },
     { VERCEL_ENV: "development", DATABASE_URL: PREVIEW_URL },
-    { STELLARCORE_ENVIRONMENT: "test" },
-    { STELLARCORE_ENVIRONMENT: "ci", DATABASE_URL: PREVIEW_URL },
-    { STELLARCORE_ENVIRONMENT: "development", DATABASE_URL: PREVIEW_URL },
+    { CORRIDORLENS_ENVIRONMENT: "test" },
+    { CORRIDORLENS_ENVIRONMENT: "ci", DATABASE_URL: PREVIEW_URL },
+    { CORRIDORLENS_ENVIRONMENT: "development", DATABASE_URL: PREVIEW_URL },
     {},
   ];
 
@@ -244,7 +244,7 @@ test("metadata exposes only environment identity and never sensitive configurati
   }
 
   const failed = resolveEnvironmentMetadata({
-    STELLARCORE_ENVIRONMENT: "production",
+    CORRIDORLENS_ENVIRONMENT: "production",
     DATABASE_URL: PRODUCTION_URL,
   });
   assert.deepEqual(failed, { ok: false, code: "ENVIRONMENT_METADATA_UNAVAILABLE" });

@@ -60,7 +60,7 @@ export type CyclonedxSbom = Readonly<{
 
 export type BuildProvenance = Readonly<{
   _type: "https://schemas.opencontainers.org/attribution/manifest/v1";
-  stellarcoreProvenanceVersion: "v1";
+  corridorlensProvenanceVersion: "v1";
   buildType: string;
   builder: Readonly<{ id: string }>;
   invocationId: string;
@@ -79,10 +79,10 @@ export type BuildProvenance = Readonly<{
   }>;
   runtimeConfiguration: Readonly<{
     fingerprint: string;
-    fingerprintVersion: "stellarcore-runtime-config-v1";
+    fingerprintVersion: "corridorlens-runtime-config-v1";
   }>;
   artifact: Readonly<{
-    name: "stellarcore-release-manifest";
+    name: "corridorlens-release-manifest";
     sbomSha256: string;
   }>;
 }>;
@@ -104,7 +104,7 @@ export function generateReleaseManifest(input: ReleaseManifestInput): ReleaseMan
     }>;
   };
 
-  const applicationName = lockfile.name ?? "stellarcore";
+  const applicationName = lockfile.name ?? "corridorlens";
   const applicationVersion = lockfile.version ?? "0.0.0";
 
   // npm lockfile v3 marks dev-only packages with dev/devOptional. Include every
@@ -124,7 +124,7 @@ export function generateReleaseManifest(input: ReleaseManifestInput): ReleaseMan
       const version = pkg.version!;
       return Object.freeze({
         type: "library" as const,
-        "bom-ref": `urn:stellarcore:npm:${encodeURIComponent(path)}@${version}`,
+        "bom-ref": `urn:corridorlens:npm:${encodeURIComponent(path)}@${version}`,
         name,
         version,
         purl: packagePurl(name, version),
@@ -149,9 +149,9 @@ export function generateReleaseManifest(input: ReleaseManifestInput): ReleaseMan
 
   const provenance: BuildProvenance = Object.freeze({
     _type: "https://schemas.opencontainers.org/attribution/manifest/v1",
-    stellarcoreProvenanceVersion: "v1",
+    corridorlensProvenanceVersion: "v1",
     buildType:
-      "https://github.com/Aboyeji-Isaac/StellarCore/.github/workflows/deploy-production.yml@v1",
+      "https://github.com/ProofOfAgency/CorridorLens/.github/workflows/deploy-production.yml@v1",
     builder: Object.freeze({ id: input.sourceWorkflowRef }),
     invocationId: input.buildInvocationId,
     environmentId: input.environmentId,
@@ -165,14 +165,14 @@ export function generateReleaseManifest(input: ReleaseManifestInput): ReleaseMan
     }),
     toolchain: Object.freeze({
       node: process.version,
-      npm: process.env.STELLARCORE_NPM_VERSION ?? "bundled",
+      npm: process.env.CORRIDORLENS_NPM_VERSION ?? "bundled",
     }),
     runtimeConfiguration: Object.freeze({
       fingerprint: input.runtimeConfigFingerprint,
-      fingerprintVersion: "stellarcore-runtime-config-v1" as const,
+      fingerprintVersion: "corridorlens-runtime-config-v1" as const,
     }),
     artifact: Object.freeze({
-      name: "stellarcore-release-manifest",
+      name: "corridorlens-release-manifest",
       sbomSha256: sha256(JSON.stringify(sbom)),
     }),
   });

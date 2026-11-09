@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { pathToFileURL } from "node:url";
 
-import { assertCurrentStellarCoreConfiguration } from "@/lib/config/currentStellarCoreConfiguration";
+import { assertCurrentCorridorLensConfiguration } from "@/lib/config/currentCorridorLensConfiguration";
 import { createStructuredLogger } from "@/lib/scheduled/structuredLog";
 import { syncAnchorRegistry } from "@/lib/stellar/anchorSync";
 import { syncCorridorRegistry } from "@/lib/stellar/corridorSync";
@@ -10,7 +10,7 @@ import { syncCorridorRegistry } from "@/lib/stellar/corridorSync";
 const logger = createStructuredLogger("bootstrap-registry");
 
 async function main(): Promise<void> {
-  assertCurrentStellarCoreConfiguration();
+  assertCurrentCorridorLensConfiguration();
   const { db, ensureDatabaseEnvironment } = await import("@/lib/dbClient");
 
   try {

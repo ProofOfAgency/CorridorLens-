@@ -20,7 +20,7 @@ test("durable stamp enforces every allowed and forbidden pairing in PostgreSQL",
     resetEnvironmentGuardCacheForTests,
   } = await import("@/lib/config/environmentGuardDb");
 
-  const previousExplicit = TEST_ENV.STELLARCORE_ENVIRONMENT;
+  const previousExplicit = TEST_ENV.CORRIDORLENS_ENVIRONMENT;
 
   try {
     for (const databaseEnvironment of DATABASE_ENVIRONMENT_IDS) {
@@ -31,7 +31,7 @@ test("durable stamp enforces every allowed and forbidden pairing in PostgreSQL",
       `;
 
       for (const runtimeEnvironment of DATABASE_ENVIRONMENT_IDS) {
-        TEST_ENV.STELLARCORE_ENVIRONMENT = runtimeEnvironment;
+        TEST_ENV.CORRIDORLENS_ENVIRONMENT = runtimeEnvironment;
         resetEnvironmentGuardCacheForTests();
 
         if (runtimeEnvironment === databaseEnvironment) {
@@ -62,8 +62,8 @@ test("durable stamp enforces every allowed and forbidden pairing in PostgreSQL",
     );
   } finally {
     resetEnvironmentGuardCacheForTests();
-    if (previousExplicit === undefined) delete TEST_ENV.STELLARCORE_ENVIRONMENT;
-    else TEST_ENV.STELLARCORE_ENVIRONMENT = previousExplicit;
+    if (previousExplicit === undefined) delete TEST_ENV.CORRIDORLENS_ENVIRONMENT;
+    else TEST_ENV.CORRIDORLENS_ENVIRONMENT = previousExplicit;
   }
 });
 

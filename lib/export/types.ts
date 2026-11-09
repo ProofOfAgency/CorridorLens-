@@ -18,7 +18,7 @@ export type ExportSelection = Readonly<{
 export type ExportProvenance = Readonly<{
   exportedAt: string;
   exportedBy: string;
-  stellarCoreVersion: string;
+  corridorLensVersion: string;
   schemaVersion: EvidenceExportVersion;
   selection: ExportSelection;
   deploymentRevision?: string;

@@ -115,7 +115,7 @@ export function buildRegistrySummary(
 export function formatRegistrySummary(summary: RegistrySummary): string {
   const lines: string[] = [];
 
-  lines.push("StellarCore reviewed registry");
+  lines.push("CorridorLens reviewed registry");
   lines.push("=============================");
   lines.push(
     `${summary.anchors.length} anchor(s), ` +

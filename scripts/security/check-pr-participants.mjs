@@ -169,7 +169,7 @@ async function readJson(url, token) {
       Accept: "application/vnd.github+json",
       Authorization: `Bearer ${token}`,
       "X-GitHub-Api-Version": API_VERSION,
-      "User-Agent": "stellarcore-pr-participant-guard",
+      "User-Agent": "corridorlens-pr-participant-guard",
     },
   });
   if (!response.ok) throw new Error(`GitHub API returned HTTP ${response.status} for ${url}`);

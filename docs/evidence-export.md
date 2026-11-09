@@ -1,6 +1,6 @@
 # Evidence export packages
 
-StellarCore evidence exports are portable, database-independent audit packages
+CorridorLens evidence exports are portable, database-independent audit packages
 for a bounded time range and optional anchor/corridor selection.
 
 ## Format version 1.0
@@ -23,7 +23,7 @@ manifest. The package root SHA-256 covers both the canonical member descriptors
 and provenance, including the requested selection. Modifying provenance or any
 covered member therefore makes verification fail against the recorded root.
 
-The manifest records the StellarCore version, schema version, export time,
+The manifest records the CorridorLens version, schema version, export time,
 exporter identity, bounded selection, and deployment/configuration identifiers
 when those non-secret identifiers are available.
 

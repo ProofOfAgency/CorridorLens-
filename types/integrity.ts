@@ -2,7 +2,7 @@ import type { ReputationAnchorStatus } from "@/types/reputation";
 
 /**
  * Entity classes the integrity audit can report against. These are the
- * persisted evidence-graph tables owned by StellarCore, not registry inputs.
+ * persisted evidence-graph tables owned by CorridorLens, not registry inputs.
  */
 export type EvidenceIntegrityEntityType =
   | "anchor"

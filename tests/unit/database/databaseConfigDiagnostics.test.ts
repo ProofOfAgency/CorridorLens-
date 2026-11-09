@@ -43,12 +43,12 @@ test("sanitized connection string preserves safe host and database details", () 
 });
 
 test("sanitized connection string preserves non-TLS query parameters", () => {
-  const url = "postgres://user:pass@db.example.com:5432/stellar?connection_limit=5&application_name=stellarcore&sslmode=require";
+  const url = "postgres://user:pass@db.example.com:5432/stellar?connection_limit=5&application_name=corridorlens&sslmode=require";
   const stripped = stripTlsParameters(url);
   const parsed = new URL(stripped);
 
   assert.equal(parsed.searchParams.get("connection_limit"), "5");
-  assert.equal(parsed.searchParams.get("application_name"), "stellarcore");
+  assert.equal(parsed.searchParams.get("application_name"), "corridorlens");
   assert.equal(parsed.searchParams.has("sslmode"), false);
 });
 
@@ -143,7 +143,7 @@ test("TLS policy rejection signal does not contain credentials", () => {
 test("resolveDatabaseTlsPolicyForEnvironment sanitizedConnectionString strips TLS params in all scenarios", () => {
   const scenarios = [
     { name: "plain URL", url: VERIFIED_URL },
-    { name: "with sslmode=require", url: `${VERIFIED_URL}?sslmode=require&application_name=stellarcore` },
+    { name: "with sslmode=require", url: `${VERIFIED_URL}?sslmode=require&application_name=corridorlens` },
     { name: "with ssl=no-verify", url: `${VERIFIED_URL}?ssl=no-verify&connection_limit=5` },
     { name: "with multiple TLS params", url: `${VERIFIED_URL}?sslmode=verify-ca&sslrootcert=ca.pem&sslcert=cert.pem&sslkey=key.pem&app=myapp` },
   ];
@@ -159,8 +159,8 @@ test("resolveDatabaseTlsPolicyForEnvironment sanitizedConnectionString strips TL
     for (const param of ["sslmode", "ssl", "sslrootcert", "sslcert", "sslkey", "sslnegotiation", "uselibpqcompat"]) {
       assert.equal(parsed.searchParams.has(param), false, `${name}: ${param} should be stripped`);
     }
-    if (url.includes("application_name=stellarcore")) {
-      assert.equal(parsed.searchParams.get("application_name"), "stellarcore");
+    if (url.includes("application_name=corridorlens")) {
+      assert.equal(parsed.searchParams.get("application_name"), "corridorlens");
     }
     if (url.includes("connection_limit=5")) {
       assert.equal(parsed.searchParams.get("connection_limit"), "5");

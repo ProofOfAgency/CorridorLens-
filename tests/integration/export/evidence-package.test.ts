@@ -99,8 +99,8 @@ test("manifest provenance is bound into the root hash", async () => {
 });
 
 test("same bounded data and provenance produce deterministic package bytes", async () => {
-  const first = await mkdtemp(join(tmpdir(), "stellarcore-export-a-"));
-  const second = await mkdtemp(join(tmpdir(), "stellarcore-export-b-"));
+  const first = await mkdtemp(join(tmpdir(), "corridorlens-export-a-"));
+  const second = await mkdtemp(join(tmpdir(), "corridorlens-export-b-"));
   try {
     const one = await exportEvidence(
       dependencies(),
@@ -304,7 +304,7 @@ function dependencies(rateRows = 2): ExportDependencies {
 async function withTempDir(
   callback: (dir: string) => Promise<void>,
 ): Promise<void> {
-  const dir = await mkdtemp(join(tmpdir(), "stellarcore-export-"));
+  const dir = await mkdtemp(join(tmpdir(), "corridorlens-export-"));
   try {
     await callback(dir);
   } finally {

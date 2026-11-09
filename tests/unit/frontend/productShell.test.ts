@@ -80,7 +80,7 @@ test("visible landing calls to action point to their stated destinations", () =>
 });
 
 test("shared header keeps real home and dashboard navigation available", () => {
-  assert.match(headerSource, /href="\/" aria-label="StellarCore home"/);
+  assert.match(headerSource, /href="\/" aria-label="CorridorLens home"/);
   assert.match(headerSource, /href="\/dashboard"/);
   assert.match(headerSource, /aria-current=\{current === "dashboard" \? "page" : undefined\}/);
   assert.doesNotMatch(

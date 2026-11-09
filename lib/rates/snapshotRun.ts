@@ -1,5 +1,5 @@
 import { REVIEWED_LIVE_RATE_SOURCES } from "@/constants/liveRateSources";
-import { assertCurrentStellarCoreConfiguration } from "@/lib/config/currentStellarCoreConfiguration";
+import { assertCurrentCorridorLensConfiguration } from "@/lib/config/currentCorridorLensConfiguration";
 import {
   buildReviewedLiveRateCandidates,
   fetchReviewedIndicativeRate,
@@ -59,7 +59,7 @@ export async function snapshotReviewedLiveRates(
 }
 
 const DEFAULT_DEPENDENCIES = Object.freeze({
-  assertConfiguration: assertCurrentStellarCoreConfiguration,
+  assertConfiguration: assertCurrentCorridorLensConfiguration,
   buildCandidates: buildReviewedLiveRateCandidates,
   executeCandidates: async (candidates) => formatLiveRateRunSummary(
     await runRateEngine(candidates, {

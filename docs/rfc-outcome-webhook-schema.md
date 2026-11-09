@@ -6,7 +6,7 @@
 
 ## Summary
 
-This RFC defines the JSON payload contract a future transfer-outcome webhook would receive from an authorized anchor. It separates what the webhook **would receive** from what StellarCore **would verify** and what StellarCore **would later store or use**.
+This RFC defines the JSON payload contract a future transfer-outcome webhook would receive from an authorized anchor. It separates what the webhook **would receive** from what CorridorLens **would verify** and what CorridorLens **would later store or use**.
 
 This document deliberately proposes **no** endpoint, **no** `TransferOutcome` model change, **no** database migration, **no** authentication middleware, **no** replay store, and **no** application ingestion code. It exists so that the payload format, trust model, and rejection policy can be reviewed before any writer is introduced.
 
@@ -18,7 +18,7 @@ The proposal is consistent with the existing architecture:
 
 ## Current state and constraints
 
-StellarCore already persists `TransferOutcome` rows with:
+CorridorLens already persists `TransferOutcome` rows with:
 
 | Field | Type | Meaning |
 |---|---|---|
@@ -88,7 +88,7 @@ The proposed payload is a single signed JSON object. All numeric and timestamp f
 | `schemaVersion` | string (`"1"`) | required | Version of this payload contract. Must be checked before parsing anything else. |
 | `event` | object | required | Stable identity of the underlying transfer event. See below. |
 | `source` | object | required | Who is reporting and for which reviewed relationship. See below. |
-| `outcome` | object | required | The terminal result and the derived numeric facts StellarCore's reputation engine consumes. See below. |
+| `outcome` | object | required | The terminal result and the derived numeric facts CorridorLens's reputation engine consumes. See below. |
 | `amounts` | object | optional | Amount and asset context. Optional because some statuses (`EXPIRED`, `ERROR`) may carry no filled amount. |
 | `createdAt` | string (RFC 3339 UTC) | required | Time the anchor produced this payload (ingest/report time). Distinct from `event.occurredAt` and `outcome.settledAt`. |
 | `provenance` | object | required | Signature and key metadata for verification. See [Provenance strategy](#provenance-strategy). |
@@ -97,7 +97,7 @@ The proposed payload is a single signed JSON object. All numeric and timestamp f
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `id` | string, 1–200 chars, anchor-assigned | required | **Stable, source-scoped, unique transfer event identifier.** This is the deduplication key: `source.anchorSlug + event.id` must identify one logical transfer for the life of StellarCore's retention. It must not change across retries or corrections. |
+| `id` | string, 1–200 chars, anchor-assigned | required | **Stable, source-scoped, unique transfer event identifier.** This is the deduplication key: `source.anchorSlug + event.id` must identify one logical transfer for the life of CorridorLens's retention. It must not change across retries or corrections. |
 | `version` | integer `>= 1` | required | Version of this logical event. A correction or retraction is a new `version` of the same `event.id`, not a new `event.id` (see [Replay and corrections](#event-identity-replay-and-corrections)). |
 | `occurredAt` | string (RFC 3339 UTC) | required | When the transfer reached (or would reach) its terminal state from the anchor's perspective. This is the event-time the reputation window should be anchored to, not `createdAt`. |
 
@@ -105,8 +105,8 @@ The proposed payload is a single signed JSON object. All numeric and timestamp f
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
-| `anchorSlug` | string | required | The anchor being reported on. Must match a slug in StellarCore's reviewed anchor registry; the payload's signature must verify under the key registered for **this** slug. |
-| `corridorSlug` | string | required | The corridor of the transfer. Must match a `Corridor.slug` in StellarCore's reviewed corridor registry and must be a corridor associated with the anchor. |
+| `anchorSlug` | string | required | The anchor being reported on. Must match a slug in CorridorLens's reviewed anchor registry; the payload's signature must verify under the key registered for **this** slug. |
+| `corridorSlug` | string | required | The corridor of the transfer. Must match a `Corridor.slug` in CorridorLens's reviewed corridor registry and must be a corridor associated with the anchor. |
 
 #### `outcome`
 
@@ -140,7 +140,7 @@ Single allowed value today: `"1"`. Future additive changes bump the version and 
 
 ### `outcome.status`
 
-| Value | Meaning (StellarCore semantics) |
+| Value | Meaning (CorridorLens semantics) |
 |---|---|
 | `COMPLETED` | The full source-defined transfer reached a successful terminal state. Under current scoring this is the only success. |
 | `PARTIAL` | The transfer settled but not at the requested fill. Under current scoring this is a failure. |
@@ -160,7 +160,7 @@ These map 1:1 to the persisted `TransferStatus` enum. A future implementation RF
   - `sourceAmount`/`destinationAmount`: `> 0` for requested, `>= 0` for filled.
 - **`settlementMs`:** integer milliseconds `>= 0`.
 
-## What StellarCore would verify
+## What CorridorLens would verify
 
 On receipt, the ingestion boundary would run, in order:
 
@@ -179,15 +179,15 @@ For signature verification the payload is serialized canonically so byte-for-byt
 - Numeric strings stay strings; RFC 3339 timestamps are normalized to millisecond form with `Z`.
 - The `provenance.signature` and `provenance.keyId` fields are **excluded** from the bytes that are signed.
 
-The serving anchor and StellarCore agree on this canonical form out of band as part of onboarding; it is not discovered at request time.
+The serving anchor and CorridorLens agree on this canonical form out of band as part of onboarding; it is not discovered at request time.
 
 ## Provenance strategy
 
 ### Preferred approach: anchor-signed payloads with a registered public key
 
 - Each qualifying anchor holds an **outcome-signing key pair distinct from its SEP-1 `SIGNING_KEY`**, or a formally authorized dedicated subkey. The SEP-1 `SIGNING_KEY` is documented for SEP-10 authentication and is not reused for outcome attestation without explicit maintainer approval (consistent with the ingestion-architecture RFC).
-- The anchor's public key, `keyId`, signing algorithm (proposal: Ed25519), activation and expiry dates, and revocation state are **registered in StellarCore's reviewed anchor registry**. Key discovery is therefore a controlled onboarding step, not a runtime `stellar.toml` fetch. The registry is the trust root; a signature verifying against an unregistered key is rejected.
-- The anchor signs the canonical payload (see above). StellarCore verifies the signature with the registered key before any other processing.
+- The anchor's public key, `keyId`, signing algorithm (proposal: Ed25519), activation and expiry dates, and revocation state are **registered in CorridorLens's reviewed anchor registry**. Key discovery is therefore a controlled onboarding step, not a runtime `stellar.toml` fetch. The registry is the trust root; a signature verifying against an unregistered key is rejected.
+- The anchor signs the canonical payload (see above). CorridorLens verifies the signature with the registered key before any other processing.
 - Replay protection combines three controls:
   - `event.id` scoped to the anchor is the stable deduplication key;
   - `event.version` makes corrections explicit rather than ambiguous new events;
@@ -218,7 +218,7 @@ Nothing accepted into the queue may reach `TransferOutcome` or the reputation ca
 
 ## Event identity, replay, and corrections
 
-- `event.id` is opaque to StellarCore but must be **anchor-stable**: identical across retries of the same webhook delivery, changed only when the logical transfer changes.
+- `event.id` is opaque to CorridorLens but must be **anchor-stable**: identical across retries of the same webhook delivery, changed only when the logical transfer changes.
 - A **correction** is a new `event.version` for the same `event.id`; it supersedes prior versions without deleting them.
 - A **retraction** is a special correction that marks the event void; if normalization already projected the original into `TransferOutcome`, retraction leads to a reviewed supersession, never a silent `DELETE`.
 - **Backfills** are re-deliveries of accepted `(event.id, event.version)` tuples or explicit new events inside an approved window; both are deduplicated by the accepted-event store.
@@ -228,7 +228,7 @@ Nothing accepted into the queue may reach `TransferOutcome` or the reputation ca
 
 - The `status` enum maps exactly to the persisted `TransferStatus` enum (`COMPLETED`, `PARTIAL`, `REFUNDED`, `EXPIRED`, `ERROR`) in [`prisma/schema.prisma`](../prisma/schema.prisma).
 - `fillRate`, `settlementMs`, `slippage`, and `recordedAt` naming matches the `TransferOutcome` columns and the reputation engine's expectations ([`lib/reputation/score.ts`](../lib/reputation/score.ts), [`lib/reputation/repository.ts`](../lib/reputation/repository.ts)).
-- `recordedAt` in the database corresponds to the projected value of the payload's `event.occurredAt` — the reputation window ([`MIN_REPUTATION_OUTCOMES`](../constants/reputation.ts), 7/30/90-day metrics) is anchored to terminal event time, not to the time StellarCore ingested the payload.
+- `recordedAt` in the database corresponds to the projected value of the payload's `event.occurredAt` — the reputation window ([`MIN_REPUTATION_OUTCOMES`](../constants/reputation.ts), 7/30/90-day metrics) is anchored to terminal event time, not to the time CorridorLens ingested the payload.
 - Terminology (`source assertion`, `attestation`, `provenance`, `terminal outcome`, `on-chain observation`, `off-chain settlement/transfer leg`, `review decision`, `source event identity`) is carried over verbatim from [`rfc-outcome-ingestion-architecture.md`](rfc-outcome-ingestion-architecture.md).
 
 ## Explicit non-goals

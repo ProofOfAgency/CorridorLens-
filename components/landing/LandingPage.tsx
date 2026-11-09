@@ -47,7 +47,7 @@ const EVIDENCE_PRINCIPLES = Object.freeze([
   Object.freeze({
     kicker: "Reviewed configuration",
     title: "Known, not assumed.",
-    copy: "Anchor and corridor candidates are deliberately reviewed before they enter StellarCore's observation boundary.",
+    copy: "Anchor and corridor candidates are deliberately reviewed before they enter CorridorLens's observation boundary.",
     signal: "Configured",
     boundary: "Not operational proof",
     tone: "lime",
@@ -80,7 +80,7 @@ const EVIDENCE_PRINCIPLES = Object.freeze([
 
 const PRODUCT_CONTRACT = Object.freeze([
   Object.freeze({ title: "Read only", copy: "Inspect intelligence without initiating transfers." }),
-  Object.freeze({ title: "Persisted first", copy: "Public views reflect evidence StellarCore has stored." }),
+  Object.freeze({ title: "Persisted first", copy: "Public views reflect evidence CorridorLens has stored." }),
   Object.freeze({ title: "Freshness shown", copy: "Recent and stale observations remain distinct." }),
   Object.freeze({ title: "Null stays null", copy: "Missing evidence never becomes a fabricated zero." }),
 ]);
@@ -89,7 +89,7 @@ function BrandLogo() {
   return (
     <Image
       className="brand-logo"
-      src="/StellarCore-logo.png"
+      src="/CorridorLens-logo.png"
       alt=""
       width={135}
       height={128}
@@ -205,7 +205,7 @@ function Hero({ reviewedCorridors }: { reviewedCorridors: readonly ReviewedCorri
         <span>Read-only Stellar intelligence</span>
         <span>Built on Stellar</span>
       </div>
-      <h1 className="hero-title">STELLARCORE</h1>
+      <h1 className="hero-title">CORRIDORLENS</h1>
       <div className="hero-bottom reveal-item">
         <div className="hero-proposition">
           <p className="hero-proposition-lead">
@@ -231,7 +231,7 @@ function Hero({ reviewedCorridors }: { reviewedCorridors: readonly ReviewedCorri
 
 function EvidenceTicker() {
   return (
-    <section className="rate-section" id="evidence-model" aria-label="StellarCore evidence model">
+    <section className="rate-section" id="evidence-model" aria-label="CorridorLens evidence model">
       <div className="section-intro">
         <span className="eyebrow">What you can inspect</span>
         <p>Four read-only views of persisted Stellar network evidence.</p>
@@ -339,7 +339,7 @@ function ProductContractSection() {
         <Link href="/dashboard">Open dashboard <Arrow /></Link>
       </div>
       <footer>
-        <Link className="brand" href="/"><BrandLogo /> StellarCore</Link>
+        <Link className="brand" href="/"><BrandLogo /> CorridorLens</Link>
         <p>Read-only evidence for an open financial network.</p>
         <div>
           <Link href="/">Home</Link>
